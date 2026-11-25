@@ -37,13 +37,17 @@ const time = z
   .string({ error: 'time is required as "HH:MM" (24h)' })
   .regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/, 'time must be "HH:MM" in 24h format, e.g. "08:30" or "23:00"');
 
-const dayHours = z.union(
-  [
-    z.literal('closed'),
-    z.strictObject({ open: time, close: time }),
-  ],
-  { error: 'each day must be { "open": "HH:MM", "close": "HH:MM" } or "closed"' },
-);
+const interval = z.strictObject({ open: time, close: time });
+export type Interval = z.infer<typeof interval>;
+
+/**
+ * "closed", one interval, or several (e.g. lunch + dinner).
+ * A close time earlier than the open time runs past midnight ("18:00"–"02:00").
+ */
+const dayHours = z.union([z.literal('closed'), interval, z.array(interval).min(1)], {
+  error: 'each day must be { "open": "HH:MM", "close": "HH:MM" }, a list of those (e.g. lunch + dinner), or "closed"',
+});
+export type DayHours = z.infer<typeof dayHours>;
 
 const googleFont = z.strictObject({
   /** Google Fonts family name exactly as on fonts.google.com, e.g. "Playfair Display". */
@@ -61,7 +65,10 @@ const menuItem = z.strictObject({
   /** A number is shown with menu.currency (e.g. 320 -> "₹320"); a string is shown as-is (e.g. "₹320 / ₹420"). */
   price: z.union([z.number().nonnegative(), nonEmpty('price')], { error: 'price is required (number or text)' }),
   image: imagePath.optional(),
-  /** Short label, e.g. "Bestseller", "Veg", "Vegan", "New", "Spicy". */
+  /**
+   * Short label, e.g. "Bestseller", "Signature", "Veg", "Non-veg", "Vegan", "New", "Spicy".
+   * Items tagged "Bestseller" or "Signature" also appear in the Signature section.
+   */
   tag: z.string().trim().min(1).max(24, 'tag should be a short label (max 24 characters)').optional(),
 });
 
@@ -186,8 +193,18 @@ export const cafeConfigSchema = z.strictObject({
     {
       text: nonEmpty('cta.text'),
       action: z.enum(['whatsapp', 'call', 'maps'], { error: 'cta.action must be "whatsapp", "call" or "maps"' }),
-      /** Pre-filled WhatsApp message (whatsapp action only). */
+      /** Pre-filled WhatsApp message (used by every WhatsApp button on the page). */
       message: z.string().trim().optional(),
+      /** Headline of the contact band near the bottom of the page. Defaults to a mood-specific line with the cafe name. */
+      headline: z.string().trim().min(1).optional(),
+      /** Labels for the secondary contact buttons. Defaults depend on the mood (e.g. "Call to reserve"). */
+      labels: z
+        .strictObject({
+          call: z.string().trim().min(1).optional(),
+          whatsapp: z.string().trim().min(1).optional(),
+          maps: z.string().trim().min(1).optional(),
+        })
+        .optional(),
     },
     { error: 'cta is required: { "text", "action": "whatsapp" | "call" | "maps" }' },
   ),
@@ -241,6 +258,12 @@ export function referencedImages(c: CafeConfig): string[] {
   if (c.brand.logo) out.push(c.brand.logo);
   for (const cat of c.menu.categories) for (const item of cat.items) if (item.image) out.push(item.image);
   return [...new Set(out)];
+}
+
+/** Normalise a day's hours to a list of intervals ([] = closed). */
+export function dayIntervals(d: DayHours): Interval[] {
+  if (d === 'closed') return [];
+  return Array.isArray(d) ? d : [d];
 }
 
 export function storyParagraphs(c: CafeConfig): string[] {

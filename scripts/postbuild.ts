@@ -1,6 +1,7 @@
 /**
  * Runs after `vite build`. For every cafe:
  *   - copies cafes/<slug>/images → dist/<slug>/images
+ *   - generates responsive WebP variants → dist/<slug>/images/_r/<file>.<w>w.webp
  *   - writes dist/<slug>/index.html with that cafe's <title>, description,
  *     Open Graph + Twitter tags (og:image = hero image), fonts and theme colours,
  *     so WhatsApp / Instagram / iMessage link previews show the right cafe.
@@ -10,8 +11,10 @@ import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { imageSize } from 'image-size';
+import { isRaster, variantPath, variantWidths } from '../src/config/images.ts';
 import { buildTheme } from '../src/theme/buildTheme.ts';
 import { loadAllCafes, printErrorsAndExit, ROOT, type LoadedCafe } from './lib/cafes.ts';
+import { readImageManifest, renderVariant } from './lib/images.ts';
 
 const DIST = path.join(ROOT, 'dist');
 const HEAD_MARKER = '<!--cafe-head-->';
@@ -120,6 +123,7 @@ if (!base) {
 }
 
 const rows: string[] = [];
+let variantCount = 0;
 for (const cafe of cafes) {
   const outDir = path.join(DIST, cafe.slug);
   mkdirSync(outDir, { recursive: true });
@@ -128,6 +132,20 @@ for (const cafe of cafes) {
   if (existsSync(imagesSrc) && statSync(imagesSrc).isDirectory()) {
     cpSync(imagesSrc, path.join(outDir, 'images'), { recursive: true });
   }
+
+  // Responsive variants for srcset (must match src/config/images.ts).
+  const manifest = readImageManifest(cafe.dir);
+  const jobs: Promise<void>[] = [];
+  for (const [rel, { w }] of Object.entries(manifest)) {
+    if (!isRaster(rel)) continue;
+    for (const width of variantWidths(w)) {
+      const out = path.join(outDir, variantPath(rel, width));
+      mkdirSync(path.dirname(out), { recursive: true });
+      jobs.push(renderVariant(path.join(cafe.dir, rel), width).then((buf) => writeFileSync(out, buf)));
+    }
+  }
+  await Promise.all(jobs);
+  variantCount += jobs.length;
 
   const { title, head, ogImage } = headFor(cafe, base);
   writeFileSync(path.join(outDir, 'index.html'), render(template, title, head));
@@ -140,5 +158,6 @@ writeFileSync(path.join(DIST, '404.html'), render(template, 'Not found', ''));
 
 console.log(`\n✓ Generated ${cafes.length} cafe page${cafes.length === 1 ? '' : 's'}:`);
 console.log(rows.join('\n'));
+console.log(`✓ ${variantCount} responsive image variants generated`);
 for (const w of warnings) console.warn(`⚠ ${w}`);
 console.log('');

@@ -1,0 +1,105 @@
+{
+  "slug": "tamarind-house",
+  "name": "Tamarind House",
+  "tagline": "South Indian family kitchen",
+  "mood": "warm-restaurant",
+
+  "brand": {
+    "primary": "#A3401F",
+    "accent": "#D69A2D",
+    "background": "#F6ECDD"
+  },
+
+  "hero": {
+    "headline": "Home-style meals, served on banana leaf.",
+    "subheadline": "Slow-cooked curries, crisp dosas and a Sunday thali the whole family comes back for.",
+    "heroImage": "images/hero.jpg"
+  },
+
+  "about": {
+    "title": "Three generations, one kitchen",
+    "story": [
+      "Placeholder story: who started the restaurant, which recipes came from home, and why families keep coming back.",
+      "Second paragraph: the spices they grind in-house, the dishes that never leave the menu, and the welcome guests can expect."
+    ],
+    "images": ["images/about-1.jpg", "images/about-2.jpg", "images/about-3.jpg"]
+  },
+
+  "menu": {
+    "categories": [
+      {
+        "name": "Tiffin",
+        "description": "Served until 11:30 am and again from 4 pm.",
+        "items": [
+          { "name": "Ghee roast dosa", "description": "Paper-thin, crisp, with three chutneys and sambar.", "price": 180, "image": "images/menu-dosa.jpg", "tag": "Signature" },
+          { "name": "Idli vada combo", "description": "Two steamed idlis, one medu vada.", "price": 120, "tag": "Veg" },
+          { "name": "Pongal", "description": "Rice and moong dal, pepper, cashew, ghee.", "price": 140, "tag": "Veg" }
+        ]
+      },
+      {
+        "name": "Meals",
+        "items": [
+          { "name": "Sunday family thali", "description": "Rice, rasam, sambar, two poriyals, kootu, curd, payasam.", "price": 420, "image": "images/menu-thali.jpg", "tag": "Bestseller" },
+          { "name": "Curd rice", "description": "Tempered with mustard, curry leaf and pomegranate.", "price": 160, "tag": "Veg" }
+        ]
+      },
+      {
+        "name": "Curries",
+        "items": [
+          { "name": "Chettinad chicken", "description": "Black pepper, kalpasi, roasted coconut.", "price": 380, "image": "images/menu-chettinad.jpg", "tag": "Signature" },
+          { "name": "Kerala fish curry", "description": "Kodampuli, coconut milk, served with appam.", "price": 420, "tag": "Non-veg" },
+          { "name": "Avial", "description": "Seasonal vegetables, coconut and curd.", "price": 260, "tag": "Veg" }
+        ]
+      },
+      {
+        "name": "Sweets",
+        "items": [
+          { "name": "Elaneer payasam", "description": "Tender coconut, jaggery, cardamom.", "price": 150, "tag": "Veg" },
+          { "name": "Filter coffee", "description": "Brewed strong, served in a davara.", "price": 70 }
+        ]
+      }
+    ]
+  },
+
+  "gallery": [
+    "images/gallery-1.jpg",
+    "images/gallery-2.jpg",
+    "images/gallery-3.jpg",
+    "images/gallery-4.jpg",
+    "images/gallery-5.jpg",
+    "images/gallery-6.jpg",
+    "images/gallery-7.jpg"
+  ],
+
+  "reviews": [
+    { "text": "Placeholder review — paste a real Google review here, word for word.", "author": "Reviewer name", "source": "Google" },
+    { "text": "Placeholder review — only use reviews the restaurant has actually received.", "author": "Reviewer name", "source": "Zomato" },
+    { "text": "Placeholder review — delete the reviews field entirely if there are none.", "author": "Reviewer name", "source": "Google" }
+  ],
+
+  "hours": {
+    "mon": "closed",
+    "tue": [{ "open": "07:30", "close": "11:30" }, { "open": "16:00", "close": "22:30" }],
+    "wed": [{ "open": "07:30", "close": "11:30" }, { "open": "16:00", "close": "22:30" }],
+    "thu": [{ "open": "07:30", "close": "11:30" }, { "open": "16:00", "close": "22:30" }],
+    "fri": [{ "open": "07:30", "close": "11:30" }, { "open": "16:00", "close": "23:00" }],
+    "sat": { "open": "07:30", "close": "23:00" },
+    "sun": { "open": "07:30", "close": "22:00" }
+  },
+
+  "contact": {
+    "address": "No. 00, Sample Avenue, Jayanagar 4th Block, Bengaluru 560011",
+    "mapsEmbedUrl": "https://www.google.com/maps?q=Jayanagar%2C%20Bengaluru&output=embed",
+    "phone": "+91 00000 00000",
+    "whatsapp": "+91 00000 00000",
+    "instagram": "tamarindhouse.placeholder"
+  },
+
+  "cta": {
+    "text": "Call to reserve",
+    "action": "call",
+    "message": "Hi Tamarind House! I'd like to place an order."
+  },
+
+  "agencyCredit": { "name": "Your Studio", "url": "https://example.com" }
+}

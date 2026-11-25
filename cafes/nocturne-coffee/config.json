@@ -3,50 +3,75 @@
   "name": "Nocturne",
   "tagline": "Specialty coffee, after dark",
   "mood": "dark-premium",
-
   "brand": {
     "primary": "#C9A46C",
     "accent": "#7A2E1F",
     "background": "#0D0C0B"
   },
-
   "hero": {
     "headline": "Slow coffee for late nights.",
     "subheadline": "Single-origin pour-overs, espresso tonics and a quiet bar that stays open until midnight.",
     "heroImage": "images/hero.jpg"
   },
-
   "about": {
     "title": "A coffee bar that keeps evening hours",
     "story": [
       "Placeholder story: this is where the cafe's real origin story goes, written in their voice.",
       "Second paragraph: what they roast, who they buy from, why the space feels the way it does."
     ],
-    "images": ["images/about-1.jpg", "images/about-2.jpg", "images/about-3.jpg"]
+    "images": [
+      "images/about-1.jpg",
+      "images/about-2.jpg",
+      "images/about-3.jpg"
+    ]
   },
-
   "menu": {
     "currency": "₹",
     "categories": [
       {
         "name": "Espresso bar",
         "items": [
-          { "name": "Espresso tonic", "description": "Double shot over house tonic, orange peel.", "price": 280, "image": "images/menu-tonic.jpg", "tag": "Bestseller" },
-          { "name": "Cortado", "description": "Equal parts espresso and silky milk.", "price": 220 },
-          { "name": "Midnight mocha", "description": "Dark chocolate, espresso, a pinch of sea salt.", "price": 310, "tag": "New" }
+          {
+            "name": "Espresso tonic",
+            "description": "Double shot over house tonic, orange peel.",
+            "price": 280,
+            "image": "images/menu-tonic.jpg",
+            "tag": "Bestseller"
+          },
+          {
+            "name": "Cortado",
+            "description": "Equal parts espresso and silky milk.",
+            "price": 220
+          },
+          {
+            "name": "Midnight mocha",
+            "description": "Dark chocolate, espresso, a pinch of sea salt.",
+            "price": 310,
+            "tag": "Signature",
+            "image": "images/menu-mocha.jpg"
+          }
         ]
       },
       {
         "name": "Slow bar",
         "description": "Brewed to order, about six minutes.",
         "items": [
-          { "name": "Pour-over of the week", "description": "Ask the barista what's on the bar tonight.", "price": "₹340 / ₹420" },
-          { "name": "Cold brew", "description": "Steeped 18 hours, served over one clear ice cube.", "price": 260, "image": "images/menu-coldbrew.jpg" }
+          {
+            "name": "Pour-over of the week",
+            "description": "Ask the barista what's on the bar tonight.",
+            "price": "₹340 / ₹420",
+            "tag": "Signature"
+          },
+          {
+            "name": "Cold brew",
+            "description": "Steeped 18 hours, served over one clear ice cube.",
+            "price": 260,
+            "image": "images/menu-coldbrew.jpg"
+          }
         ]
       }
     ]
   },
-
   "gallery": [
     "images/gallery-1.jpg",
     "images/gallery-2.jpg",
@@ -55,17 +80,50 @@
     "images/gallery-5.jpg",
     "images/gallery-6.jpg"
   ],
-
+  "reviews": [
+    {
+      "text": "Placeholder review — paste a real Google review here, word for word.",
+      "author": "Reviewer name",
+      "source": "Google"
+    },
+    {
+      "text": "Placeholder review — only use reviews the cafe has actually received.",
+      "author": "Reviewer name",
+      "source": "Google"
+    },
+    {
+      "text": "Placeholder review — delete the reviews field entirely if there are none.",
+      "author": "Reviewer name",
+      "source": "Zomato"
+    }
+  ],
   "hours": {
     "mon": "closed",
-    "tue": { "open": "16:00", "close": "23:59" },
-    "wed": { "open": "16:00", "close": "23:59" },
-    "thu": { "open": "16:00", "close": "23:59" },
-    "fri": { "open": "16:00", "close": "23:59" },
-    "sat": { "open": "12:00", "close": "23:59" },
-    "sun": { "open": "12:00", "close": "22:00" }
+    "tue": {
+      "open": "16:00",
+      "close": "23:59"
+    },
+    "wed": {
+      "open": "16:00",
+      "close": "23:59"
+    },
+    "thu": {
+      "open": "16:00",
+      "close": "23:59"
+    },
+    "fri": {
+      "open": "16:00",
+      "close": "23:59"
+    },
+    "sat": {
+      "open": "12:00",
+      "close": "23:59"
+    },
+    "sun": {
+      "open": "12:00",
+      "close": "22:00"
+    }
   },
-
   "contact": {
     "address": "No. 00, Sample Street, Indiranagar, Bengaluru 560038",
     "mapsEmbedUrl": "https://www.google.com/maps?q=Indiranagar%2C%20Bengaluru&output=embed",
@@ -73,12 +131,13 @@
     "whatsapp": "+91 00000 00000",
     "instagram": "nocturne.placeholder"
   },
-
   "cta": {
     "text": "Reserve a seat",
     "action": "whatsapp",
     "message": "Hi Nocturne! I'd like to reserve a seat tonight."
   },
-
-  "agencyCredit": { "name": "Your Studio", "url": "https://example.com" }
+  "agencyCredit": {
+    "name": "Your Studio",
+    "url": "https://example.com"
+  }
 }

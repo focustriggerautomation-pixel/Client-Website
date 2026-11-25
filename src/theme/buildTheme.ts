@@ -33,11 +33,15 @@ export function buildTheme(cafe: CafeConfig, moodOverride?: Mood): Theme {
   const primary = cafe.brand.primary;
   const accent = cafe.brand.accent ?? t.palette.accent;
   const ink = contrast(t.palette.ink, background) >= 7 ? t.palette.ink : bestOn(background, t.palette.ink, isDark(background) ? '#F5F1EA' : '#16120E', '#FFFFFF', '#000000');
+  const surface = mix(background, ink, isDark(background) ? 0.06 : 0.04);
+  // Secondary text: as soft as possible while staying ≥ 4.6:1 on both background and surface (WCAG AA).
+  let mutedT = 0.4;
+  while (mutedT > 0 && Math.min(contrast(mix(ink, background, mutedT), background), contrast(mix(ink, background, mutedT), surface)) < 4.6) mutedT -= 0.02;
   const colors = {
     background,
-    surface: mix(background, ink, isDark(background) ? 0.06 : 0.04),
+    surface,
     ink,
-    muted: mix(ink, background, 0.35),
+    muted: mix(ink, background, Math.max(0, mutedT)),
     line: mix(background, ink, 0.16),
     primary,
     onPrimary: bestOn(primary, '#FFFFFF', '#111111', background, ink),

@@ -26,3 +26,6 @@ export function ctaHref(c: CafeConfig): string {
 }
 
 export const ctaOpensNewTab = (c: CafeConfig) => c.cta.action !== 'call';
+
+/** Phone number as people read it: keeps the config's own spacing. */
+export const displayPhone = (phone: string) => phone.trim();

@@ -13,7 +13,7 @@ export function IndexPage() {
     Promise.all(
       listSlugs().map((slug) =>
         loadCafe(slug).then(
-          (cafe): Row => ({ slug, cafe }),
+          ({ config }): Row => ({ slug, cafe: config }),
           (e: unknown): Row => ({ slug, error: e instanceof Error ? e.message.split('\n')[0] : String(e) }),
         ),
       ),

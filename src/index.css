@@ -158,3 +158,28 @@
     radial-gradient(120% 80% at 85% 10%, rgb(var(--rgb-primary) / 0.1), transparent 60%),
     radial-gradient(90% 70% at 0% 100%, rgb(var(--rgb-ink) / 0.06), transparent 60%);
 }
+
+@layer base {
+  /* Anchor jumps land below the fixed header. */
+  html {
+    scroll-padding-top: 5.5rem;
+  }
+}
+
+@utility section-y {
+  padding-block: var(--space-section);
+}
+
+/* Full-bleed horizontal scroller inside .container-x (cards can scroll edge to edge on phones). */
+@utility bleed-x {
+  margin-inline: calc(-1 * clamp(1.25rem, 5vw, 3rem));
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
+  scroll-padding-inline: clamp(1.25rem, 5vw, 3rem);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

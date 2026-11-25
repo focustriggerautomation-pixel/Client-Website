@@ -26,3 +26,36 @@ export const ArrowIcon = (p: SVGProps<SVGSVGElement>) => (
     <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 );
+
+export const InstagramIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+  </svg>
+);
+
+export const MenuIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" {...p}>
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </svg>
+);
+
+export const CloseIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" {...p}>
+    <path d="M6 6l12 12M18 6 6 18" />
+  </svg>
+);
+
+export const ClockIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3 2" />
+  </svg>
+);
+
+export const QuoteIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} viewBox="0 0 32 24" fill="currentColor" {...p}>
+    <path d="M0 24V14C0 6.5 4.2 1.7 12 0l1.4 3.2C9 4.6 6.9 7.3 6.6 11H12v13H0Zm19 0V14c0-7.5 4.2-12.3 12-14l1 3.2c-4.4 1.4-6.5 4.1-6.8 7.8H31v13H19Z" />
+  </svg>
+);

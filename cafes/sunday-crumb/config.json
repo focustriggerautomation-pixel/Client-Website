@@ -3,47 +3,78 @@
   "name": "Sunday Crumb",
   "tagline": "Bakery & all-day brunch",
   "mood": "bright-cafe",
-
   "brand": {
     "primary": "#E4572E",
     "accent": "#FFC94A",
     "background": "#FFF6E5",
     "logo": "images/logo.svg"
   },
-
   "hero": {
     "headline": "Fresh out of the oven, every morning.",
     "subheadline": "Sourdough, flaky croissants and big brunch plates, made from scratch in Koramangala.",
     "heroImage": "images/hero.jpg"
   },
-
   "about": {
     "title": "Baked before the city wakes up",
     "story": "Placeholder story: a short, warm paragraph about who bakes, when the ovens start and what makes the place special.",
-    "images": ["images/about-1.jpg", "images/about-2.jpg"]
+    "images": [
+      "images/about-1.jpg",
+      "images/about-2.jpg"
+    ]
   },
-
   "menu": {
     "categories": [
       {
         "name": "From the oven",
         "items": [
-          { "name": "Butter croissant", "description": "72-hour laminated dough, French butter.", "price": 160, "image": "images/menu-croissant.jpg", "tag": "Bestseller" },
-          { "name": "Cardamom bun", "description": "Twisted, glazed, still warm at 9am.", "price": 140, "tag": "Veg" },
-          { "name": "Country sourdough loaf", "description": "Whole loaf to take home.", "price": 320, "tag": "Vegan" }
+          {
+            "name": "Butter croissant",
+            "description": "72-hour laminated dough, French butter.",
+            "price": 160,
+            "image": "images/menu-croissant.jpg",
+            "tag": "Bestseller"
+          },
+          {
+            "name": "Cardamom bun",
+            "description": "Twisted, glazed, still warm at 9am.",
+            "price": 140,
+            "tag": "Veg"
+          },
+          {
+            "name": "Country sourdough loaf",
+            "description": "Whole loaf to take home.",
+            "price": 320,
+            "tag": "Vegan"
+          }
         ]
       },
       {
         "name": "Brunch plates",
         "items": [
-          { "name": "Shakshuka", "description": "Baked eggs, spiced tomato, feta, sourdough toast.", "price": 390, "image": "images/menu-shakshuka.jpg" },
-          { "name": "Avocado on sourdough", "description": "Chilli crunch, lime, microgreens.", "price": 360, "tag": "Veg" },
-          { "name": "Buttermilk pancakes", "description": "Maple, berries, whipped butter.", "price": 340 }
+          {
+            "name": "Shakshuka",
+            "description": "Baked eggs, spiced tomato, feta, sourdough toast.",
+            "price": 390,
+            "image": "images/menu-shakshuka.jpg",
+            "tag": "Bestseller"
+          },
+          {
+            "name": "Avocado on sourdough",
+            "description": "Chilli crunch, lime, microgreens.",
+            "price": 360,
+            "tag": "Veg"
+          },
+          {
+            "name": "Buttermilk pancakes",
+            "description": "Maple, berries, whipped butter.",
+            "price": 340,
+            "tag": "Signature",
+            "image": "images/menu-pancakes.jpg"
+          }
         ]
       }
     ]
   },
-
   "gallery": [
     "images/gallery-1.jpg",
     "images/gallery-2.jpg",
@@ -52,17 +83,36 @@
     "images/gallery-5.jpg",
     "images/gallery-6.jpg"
   ],
-
   "hours": {
-    "mon": { "open": "08:00", "close": "18:00" },
-    "tue": { "open": "08:00", "close": "18:00" },
-    "wed": { "open": "08:00", "close": "18:00" },
-    "thu": { "open": "08:00", "close": "18:00" },
-    "fri": { "open": "08:00", "close": "20:00" },
-    "sat": { "open": "07:30", "close": "20:00" },
-    "sun": { "open": "07:30", "close": "16:00" }
+    "mon": {
+      "open": "08:00",
+      "close": "18:00"
+    },
+    "tue": {
+      "open": "08:00",
+      "close": "18:00"
+    },
+    "wed": {
+      "open": "08:00",
+      "close": "18:00"
+    },
+    "thu": {
+      "open": "08:00",
+      "close": "18:00"
+    },
+    "fri": {
+      "open": "08:00",
+      "close": "20:00"
+    },
+    "sat": {
+      "open": "07:30",
+      "close": "20:00"
+    },
+    "sun": {
+      "open": "07:30",
+      "close": "16:00"
+    }
   },
-
   "contact": {
     "address": "No. 00, Sample Road, Koramangala 5th Block, Bengaluru 560095",
     "mapsEmbedUrl": "https://www.google.com/maps?q=Koramangala%2C%20Bengaluru&output=embed",
@@ -70,7 +120,6 @@
     "whatsapp": "+91 00000 00000",
     "instagram": "sundaycrumb.placeholder"
   },
-
   "cta": {
     "text": "Call to order",
     "action": "call"

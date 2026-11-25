@@ -1,10 +1,13 @@
 import { createContext, useContext, useLayoutEffect, type ReactNode } from 'react';
+import type { ImageManifest } from '../config/images.ts';
 import type { CafeConfig } from '../config/schema.ts';
 import type { Theme } from './buildTheme.ts';
 
 interface CafeContextValue {
   cafe: CafeConfig;
   theme: Theme;
+  /** Intrinsic image sizes, for width/height + srcset. */
+  images: ImageManifest;
 }
 
 const CafeContext = createContext<CafeContextValue | null>(null);
@@ -22,7 +25,7 @@ const FONT_LINK_ID = 'cafe-fonts';
  * and makes sure the Google Fonts stylesheet is present. The prebuilt
  * /<slug>/index.html already ships the same <link>, so in production this is a no-op.
  */
-export function CafeThemeProvider({ cafe, theme, children }: CafeContextValue & { children: ReactNode }) {
+export function CafeThemeProvider({ cafe, theme, images, children }: CafeContextValue & { children: ReactNode }) {
   useLayoutEffect(() => {
     const root = document.documentElement;
     for (const [k, v] of Object.entries(theme.vars)) root.style.setProperty(k, v);
@@ -43,5 +46,5 @@ export function CafeThemeProvider({ cafe, theme, children }: CafeContextValue & 
     };
   }, [theme]);
 
-  return <CafeContext.Provider value={{ cafe, theme }}>{children}</CafeContext.Provider>;
+  return <CafeContext.Provider value={{ cafe, theme, images }}>{children}</CafeContext.Provider>;
 }

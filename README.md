@@ -33,7 +33,11 @@ src/
   config/registry.ts     ← finds cafes, lazy-loads one config per page
   theme/moods.ts         ← the three mood token sets
   theme/buildTheme.ts    ← mood + brand colours → CSS variables
-  components/hero/       ← one hero layout per mood
+  components/<section>/  ← one variant per mood, picked by the active mood:
+                            hero, about, menu, signature, gallery, reviews,
+                            visit (hours + map), contact (CTA band), footer
+  components/header/     ← sticky header + mobile menu (shared, mood-styled)
+  lib/                   ← shared data logic: hours / open-now, prices, signature items
   pages/                 ← cafe page, private index, 404, config-error page
 scripts/
   validate.ts            ← `npm run validate`
@@ -53,11 +57,23 @@ in `cafes/` for complete examples. Notes:
 - **brand**: `primary` required; `accent`, `background` fall back to the mood's palette; no `logo` → styled text logo.
 - **fonts** (optional): `{ "display": { "family": "Playfair Display", "weights": [400, 700], "italic": true } }`. Any Google Font; the weights must exist for that family.
 - **menu prices**: a number gets `menu.currency` (default `₹`) prepended; a string is shown as-is.
+- **menu tags**: items tagged `Bestseller` or `Signature` also appear in the Signature section (hidden if none).
+  `Veg` / `Non-veg` / `Vegan` show the Indian veg/non-veg mark.
 - **reviews**: optional. Only real reviews, copied verbatim with author and source. Never invent reviews. Omit the field if there are none.
-- **hours**: all seven days (`mon`…`sun`), each `{ "open": "08:00", "close": "22:00" }` or `"closed"`.
+- **hours**: all seven days (`mon`…`sun`), each `{ "open": "08:00", "close": "22:00" }`, a list of those for
+  split days (lunch + dinner), or `"closed"`. `"23:59"` reads as midnight; a close time earlier than the open time
+  runs past midnight. "Open now / Closed" is computed in the visitor's local time.
 - **contact.mapsEmbedUrl**: Google Maps → Share → Embed a map → copy the iframe `src`.
 - **cta.action**: `whatsapp` (uses `contact.whatsapp` + optional `cta.message`), `call`, or `maps`.
+  Optional `cta.headline` sets the contact band's headline; `cta.labels.{call,whatsapp,maps}` rename the
+  secondary buttons (defaults depend on the mood, e.g. warm-restaurant says "Call to reserve" / "Order on WhatsApp").
 - **hero image** doubles as the link-preview image: use JPG/PNG under ~600 KB (WhatsApp skips bigger images and can't show SVG).
+
+## Images
+
+Put originals in `cafes/<slug>/images/` (JPG/PNG/WebP, ideally ≤ 2000px wide). The build reads each image's
+size (for `width`/`height`) and generates WebP variants at 480/800/1200/1600px for `srcset`; the dev server
+renders the same variants on the fly. All below-the-fold images are lazy-loaded.
 
 ## Link previews (WhatsApp / Instagram)
 

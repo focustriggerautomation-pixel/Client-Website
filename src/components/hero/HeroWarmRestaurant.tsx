@@ -1,44 +1,40 @@
-import { imageUrl } from '../../config/registry.ts';
+import { SECTION_IDS } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
-import { CtaButton } from '../CtaButton.tsx';
-import { Logo } from '../Logo.tsx';
+import { ActionLink } from '../ActionLink.tsx';
+import { Img } from '../Img.tsx';
+import { OpenStatus } from '../OpenStatus.tsx';
+import { Ornament } from '../Ornament.tsx';
 
-const Ornament = ({ className = '' }: { className?: string }) => (
-  <span aria-hidden className={`flex items-center gap-2 text-primary ${className}`}>
-    <span className="h-px w-10 bg-current" />
-    <span className="size-1.5 rotate-45 border border-current" />
-    <span className="size-2 rotate-45 bg-current" />
-    <span className="size-1.5 rotate-45 border border-current" />
-    <span className="h-px w-10 bg-current" />
-  </span>
-);
-
-/** Calm and generous: centred crest, soft serif, photo in an arched frame. */
+/** Welcoming: a big food photo, soft serif, and the two things diners want — call to reserve, order on WhatsApp. */
 export function HeroWarmRestaurant() {
   const { cafe } = useCafe();
   return (
-    <section className="paper relative flex min-h-svh flex-col bg-bg text-ink">
-      <header className="container-x flex justify-center pt-7 sm:pt-10">
-        <Logo />
-      </header>
-
-      <div className="container-x grid flex-1 items-center gap-14 py-12 lg:grid-cols-[1fr_0.85fr] lg:gap-20">
-        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-          <p className="eyebrow text-primary">{cafe.tagline}</p>
-          <h1 className="display mt-5 max-w-[15ch] text-step-6">{cafe.hero.headline}</h1>
-          <Ornament className="my-7" />
-          <p className="max-w-[42ch] text-step-1 text-muted">{cafe.hero.subheadline}</p>
-          <CtaButton className="mt-10 inline-flex rounded-button bg-primary px-8 py-4 font-semibold tracking-wide text-on-primary shadow-[0_10px_30px_-12px_rgb(var(--rgb-primary))] hover:brightness-110" />
+    <section id={SECTION_IDS.top} aria-label={cafe.name} className="paper relative bg-bg pt-[4.5rem] text-ink md:pt-20">
+      <div className="lg:grid lg:min-h-[calc(100svh-5rem)] lg:grid-cols-[1.2fr_1fr]">
+        <div className="px-3 pt-3 sm:px-6 sm:pt-6 lg:order-2 lg:p-0">
+          <Img
+            path={cafe.hero.heroImage}
+            alt={`${cafe.name}: ${cafe.hero.headline}`}
+            sizes="(min-width: 1024px) 55vw, 100vw"
+            priority
+            className="aspect-[4/3] w-full rounded-image object-cover sm:aspect-[16/10] lg:aspect-auto lg:h-full lg:rounded-none lg:rounded-bl-[7rem]"
+          />
         </div>
 
-        <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
-          <div aria-hidden className="absolute inset-0 translate-x-4 translate-y-4 rounded-t-full rounded-b-image border border-primary" />
-          <img
-            src={imageUrl(cafe.slug, cafe.hero.heroImage)}
-            alt=""
-            fetchPriority="high"
-            className="relative aspect-[3/4] w-full rounded-t-full rounded-b-image object-cover"
-          />
+        <div className="flex flex-col items-center px-[clamp(1.25rem,5vw,3rem)] pb-16 pt-10 text-center lg:items-start lg:justify-center lg:py-16 lg:pl-[max(3rem,calc((100vw-var(--container))/2+3rem))] lg:pr-12 lg:text-left">
+          <p className="eyebrow text-primary">{cafe.tagline}</p>
+          <h1 className="display mt-5 max-w-[16ch] text-step-6">{cafe.hero.headline}</h1>
+          <Ornament className="my-7" />
+          <p className="max-w-[42ch] text-step-1 text-muted">{cafe.hero.subheadline}</p>
+
+          <div className="mt-9 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <ActionLink action="call" className="inline-flex rounded-button bg-primary px-7 py-4 font-semibold text-on-primary shadow-[0_12px_30px_-14px_rgb(var(--rgb-primary))] hover:brightness-110" />
+            <ActionLink action="whatsapp" className="inline-flex rounded-button border-2 border-primary px-7 py-[0.875rem] font-semibold text-primary hover:bg-primary hover:text-on-primary" />
+          </div>
+          <a href={`#${SECTION_IDS.menu}`} className="mt-6 font-semibold text-ink underline decoration-primary/40 decoration-2 underline-offset-[6px] hover:decoration-primary">
+            Browse the menu
+          </a>
+          <OpenStatus className="mt-8 text-step-n1 text-muted" />
         </div>
       </div>
     </section>

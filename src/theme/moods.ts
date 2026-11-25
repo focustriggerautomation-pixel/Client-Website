@@ -102,7 +102,7 @@ export const MOOD_TOKENS: Record<Mood, MoodTokens> = {
       eyebrowTracking: '0.08em',
       bodyLeading: 1.55,
     },
-    space: { density: 1, section: 'clamp(4rem, 9vw, 7.5rem)', container: '76rem' },
+    space: { density: 1, section: 'clamp(3rem, 6.5vw, 5.5rem)', container: '76rem' },
     radius: { sm: '10px', md: '18px', lg: '32px', button: '999px', image: '28px' },
     motion: { intensity: 1, duration: 600, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', distance: 36 },
     texture: 'none',
