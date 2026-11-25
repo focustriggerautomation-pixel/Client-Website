@@ -72,7 +72,7 @@ time `scripts/postbuild.ts`:
 - writes an optimised fallback at the original path (EXIF-rotated, ≤ 2000 px wide, mozjpeg/palette PNG);
 - writes AVIF + WebP variants at 480/800/1200/1600 px and full width to `images/_r/`;
 - caches every encode by content hash in `node_modules/.cache/cafe-images` (a rebuild with unchanged photos
-  takes well under a second; Vercel keeps `node_modules/.cache` between builds).
+  takes well under a second locally; on Vercel it lasts as long as the build cache does).
 
 `<Img>` renders `<picture>` with AVIF/WebP `srcset`s and intrinsic `width`/`height`; everything below the first
 screen is lazy-loaded. The dev server serves the same variants on the fly.
