@@ -13,8 +13,9 @@
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "new-cafe": "tsx scripts/new-cafe.ts",
-    "placeholders": "node scripts/make-placeholders.mjs",
-    "test": "tsx tests/hours.test.ts"
+    "placeholders": "tsx scripts/placeholders.ts",
+    "test": "tsx tests/hours.test.ts",
+    "check": "tsx scripts/check.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
