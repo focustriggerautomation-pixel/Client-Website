@@ -22,10 +22,12 @@ async function open(b, url, { init, ctx: ctxOpts = {} } = {}) {
   });
   await p.goto(B + url);
   await p.waitForSelector('main section');
+  // the prerendered first screen is there at once; wait until the app has taken it over (after the intro)
+  await p.waitForFunction(() => !document.getElementById('root').hasAttribute('data-shell'), null, { timeout: 15000 });
   return { ctx, p, chunks, errors };
 }
 const settle = (p) =>
-  p.waitForFunction(() => !['loading', undefined].includes(document.querySelector('[data-hero3d]')?.dataset.hero3d), null, { timeout: 30000 });
+  p.waitForFunction(() => !['loading', 'fallback:ssr', undefined].includes(document.querySelector('[data-hero3d]')?.dataset.hero3d), null, { timeout: 30000 });
 const state = (p) => p.evaluate(() => document.querySelector('[data-hero3d]')?.dataset.hero3d);
 const fallbackShown = (p) =>
   p.evaluate(() => {
