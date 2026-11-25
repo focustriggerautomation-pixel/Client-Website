@@ -1,0 +1,17 @@
+# Private pitch demos. These pages are NOT the businesses' real websites
+# and must never be indexed by search engines.
+User-agent: *
+Disallow: /
+
+# Link-preview fetchers (not search indexers) may read pages so that
+# WhatsApp / Instagram / Facebook / X / Slack / LinkedIn / Telegram show the
+# right cafe when a demo link is shared. They do not add pages to search.
+User-agent: facebookexternalhit
+User-agent: Facebot
+User-agent: WhatsApp
+User-agent: Twitterbot
+User-agent: Slackbot-LinkExpanding
+User-agent: LinkedInBot
+User-agent: TelegramBot
+User-agent: Discordbot
+Allow: /

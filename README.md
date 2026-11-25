@@ -1,0 +1,77 @@
+# Cafe demo sites
+
+Static, no-backend pitch demos for cafes and restaurants. Each prospect gets
+their own private link (`/<slug>`) with their branding, photos and content.
+All per-cafe content lives in **one config file**, so you never touch code.
+
+Vite + React + TypeScript + Tailwind CSS v4 → fully static `dist/` → Vercel.
+
+## Add a new cafe (~10 minutes)
+
+```bash
+npm run new-cafe -- blue-tokai            # copies an existing cafe as a starting point
+# edit cafes/blue-tokai/config.json
+# drop their photos into cafes/blue-tokai/images/ (or `npm run placeholders` for stand-ins)
+npm run validate                          # lists every missing / invalid field
+npm run dev                               # http://localhost:5173/blue-tokai
+```
+
+Commit and push: Vercel rebuilds and the demo is live at `https://<your-domain>/blue-tokai`.
+
+Tip: append `?mood=warm-restaurant` (or `dark-premium`, `bright-cafe`) to any demo URL
+to preview the same content in another mood.
+
+## Folder structure
+
+```
+cafes/
+  <slug>/
+    config.json          ← everything about this cafe (validated by zod)
+    images/              ← served at /<slug>/images/…
+src/
+  config/schema.ts       ← the config schema + types (single source of truth)
+  config/registry.ts     ← finds cafes, lazy-loads one config per page
+  theme/moods.ts         ← the three mood token sets
+  theme/buildTheme.ts    ← mood + brand colours → CSS variables
+  components/hero/       ← one hero layout per mood
+  pages/                 ← cafe page, private index, 404, config-error page
+scripts/
+  validate.ts            ← `npm run validate`
+  postbuild.ts           ← per-slug index.html with title / OG / Twitter tags
+  new-cafe.ts            ← `npm run new-cafe -- <slug>`
+  make-placeholders.mjs  ← `npm run placeholders` (gradient stand-in images)
+public/robots.txt        ← disallow all
+vercel.json
+```
+
+## Config reference
+
+See `src/config/schema.ts` for every field with comments, and the two samples
+in `cafes/` for complete examples. Notes:
+
+- **Image paths** are relative to the cafe folder: `"images/hero.jpg"`. The build fails if a file is missing.
+- **brand**: `primary` required; `accent`, `background` fall back to the mood's palette; no `logo` → styled text logo.
+- **fonts** (optional): `{ "display": { "family": "Playfair Display", "weights": [400, 700], "italic": true } }`. Any Google Font; the weights must exist for that family.
+- **menu prices**: a number gets `menu.currency` (default `₹`) prepended; a string is shown as-is.
+- **reviews**: optional. Only real reviews, copied verbatim with author and source. Never invent reviews. Omit the field if there are none.
+- **hours**: all seven days (`mon`…`sun`), each `{ "open": "08:00", "close": "22:00" }` or `"closed"`.
+- **contact.mapsEmbedUrl**: Google Maps → Share → Embed a map → copy the iframe `src`.
+- **cta.action**: `whatsapp` (uses `contact.whatsapp` + optional `cta.message`), `call`, or `maps`.
+- **hero image** doubles as the link-preview image: use JPG/PNG under ~600 KB (WhatsApp skips bigger images and can't show SVG).
+
+## Link previews (WhatsApp / Instagram)
+
+`npm run build` writes a real `dist/<slug>/index.html` per cafe with that cafe's
+`<title>`, description, Open Graph and Twitter tags. `og:image` needs an absolute
+URL: on Vercel the production domain is used automatically; for a custom domain
+set the env var `SITE_URL=https://demos.yourstudio.com` in the Vercel project.
+
+## Keeping demos out of Google
+
+These are pitch demos, not the businesses' real sites:
+
+- every page has `<meta name="robots" content="noindex, nofollow, noarchive">`
+- every response has an `X-Robots-Tag: noindex, nofollow, noarchive` header (vercel.json)
+- `robots.txt` disallows all crawlers; only link-preview bots (WhatsApp, Facebook/Instagram,
+  X, Slack, LinkedIn, Telegram, Discord) may fetch pages so shared links show a preview
+- the build refuses to run if the noindex meta or robots.txt is missing
