@@ -24,12 +24,18 @@ const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 
 /**
  * Absolute base URL for og:image / og:url (crawlers need absolute URLs).
- * Set SITE_URL for a custom domain; on Vercel the production domain is used automatically.
+ * Set SITE_URL for a custom domain; on Vercel: production domain for production builds, the branch URL for previews.
  */
 function siteUrl(): string | null {
   const explicit = process.env.SITE_URL?.trim();
   if (explicit) return explicit.replace(/\/+$/, '');
-  const host = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+  // Preview deployments must point at themselves (the stable branch URL): the production domain may not
+  // exist yet, or may serve different content, which would break WhatsApp/Instagram preview images.
+  const env = process.env;
+  const host =
+    env.VERCEL_ENV === 'preview'
+      ? env.VERCEL_BRANCH_URL || env.VERCEL_URL
+      : env.VERCEL_PROJECT_PRODUCTION_URL || env.VERCEL_URL;
   return host ? `https://${host.replace(/\/+$/, '')}` : null;
 }
 
