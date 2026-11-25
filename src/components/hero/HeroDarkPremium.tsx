@@ -31,18 +31,19 @@ export function HeroDarkPremium() {
         }}
       />
       <div aria-hidden className="grain absolute inset-0 -z-10 opacity-[0.09]" />
-      {/* 3D cup: right half on desktop; a band above the headline on phones. Painted behind the text layer. */}
-      <Hero3D className="absolute right-0 top-14 -z-[5] h-[29svh] w-full sm:top-0 sm:h-full sm:w-[52%] lg:w-1/2" />
+      {/* 3D cup: right half on desktop; a band above the headline on phones (the text starts below it, so short
+          phones grow the hero instead of overlapping). Painted behind the text layer. */}
+      <Hero3D className="absolute right-0 top-14 -z-[5] h-[29svh] w-full sm:top-16 sm:h-[52%] sm:w-[52%] lg:top-0 lg:h-full lg:w-[47%]" />
 
-      <div data-parallax="-1.6" data-parallax-fade className="container-x flex flex-1 flex-col justify-end pb-14 pt-32 sm:pb-20">
+      <div data-parallax="-1.6" data-parallax-fade className="container-x flex flex-1 flex-col justify-end pb-14 pt-[calc(4.5rem+29svh)] sm:pb-20 sm:pt-32">
         <p data-hero="kicker" className="eyebrow flex items-center gap-4 text-primary">
           <span aria-hidden className="h-px w-10 shrink-0 bg-primary sm:w-16" />
-          {cafe.tagline}
+          <span className="text-balance">{cafe.tagline}</span>
         </p>
         <h1 data-hero="title" className="display mt-6 max-w-[13ch] text-step-6 sm:mt-8">
           <Words text={cafe.hero.headline} />
         </h1>
-        <p data-hero="sub" className="mt-6 max-w-[46ch] text-step-1 text-muted sm:mt-8">
+        <p data-hero="sub" className="mt-6 max-w-[46ch] text-step-1 text-muted sm:mt-8 lg:max-w-[38ch]">
           {cafe.hero.subheadline}
         </p>
 

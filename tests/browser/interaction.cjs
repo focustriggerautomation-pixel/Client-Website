@@ -47,7 +47,7 @@ const B = 'http://localhost:4173';
     // nocturne overrides its menu heading in config, so identify the warm variant by its category tabs instead
     const variantOk = slug === 'nocturne-coffee' ? !!(await q.$('#menu [role=tablist]')) && (await q.textContent('#menu h2')) === 'Tonight’s menu' : (await q.textContent('#menu h2')) === marker;
     ok(m === mood && variantOk, `${slug}?mood=${mood} → ${mood} menu variant`);
-    await q.screenshot({ path: `${process.argv[2]}/override-${slug}.png` });
+    await q.screenshot({ path: `${process.argv[3] || require("os").tmpdir()}/override-${slug}.png` });
     await q.close();
   }
   // ── Phase 3 additions

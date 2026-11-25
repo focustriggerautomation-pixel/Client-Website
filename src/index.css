@@ -346,3 +346,9 @@ html.framed {
 html.framed::-webkit-scrollbar {
   display: none;
 }
+
+/* <Img> renders <picture style="display:contents"> so the <img> behaves as a direct child of grids and flex rows;
+   its <source> elements must not become (empty) grid/flex items of their own. They never render anyway. */
+picture > source {
+  display: none;
+}
