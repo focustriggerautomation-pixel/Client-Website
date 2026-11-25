@@ -2,6 +2,7 @@ import { SECTION_IDS } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { CtaButton } from '../CtaButton.tsx';
 import { ArrowIcon } from '../icons.tsx';
+import { Hero3D } from '../../hero3d/Hero3D.tsx';
 import { Img } from '../Img.tsx';
 
 /** Full-bleed, cinematic: photo dissolving into ink, editorial Didone headline bottom-left. */
@@ -29,6 +30,8 @@ export function HeroDarkPremium() {
         }}
       />
       <div aria-hidden className="grain absolute inset-0 -z-10 opacity-[0.09]" />
+      {/* 3D cup: right half on desktop; a band above the headline on phones. Painted behind the text layer. */}
+      <Hero3D className="absolute right-0 top-14 -z-[5] h-[29svh] w-full sm:top-0 sm:h-full sm:w-[52%] lg:w-1/2" />
 
       <div data-parallax="-1.6" data-parallax-fade className="container-x flex flex-1 flex-col justify-end pb-14 pt-32 sm:pb-20">
         <p data-hero="kicker" className="eyebrow flex items-center gap-4 text-primary">

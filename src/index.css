@@ -290,3 +290,51 @@
     opacity: 0.045;
   }
 }
+
+/* ── Hero 3D fallback illustrations (CSS-animated; transform/opacity only) ── */
+.h3d-steam {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: h3d-steam 3.6s ease-in-out infinite;
+}
+@keyframes h3d-steam {
+  0% { opacity: 0; transform: translateY(16px) scaleY(0.85); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-28px) scaleY(1.1); }
+}
+.h3d-float {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: h3d-float 5.5s ease-in-out infinite;
+}
+@keyframes h3d-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(10deg); }
+}
+.h3d-bounce {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: h3d-bounce 1.8s cubic-bezier(0.33, 0, 0.3, 1) infinite;
+}
+@keyframes h3d-bounce {
+  0%, 100% { transform: translateY(0) scale(1.04, 0.96); }
+  14% { transform: translateY(0) scale(1, 1); }
+  50% { transform: translateY(-18px) scale(0.98, 1.02); }
+}
+.h3d-sway {
+  transform-box: fill-box;
+  transform-origin: 50% 70%;
+  animation: h3d-sway 9s ease-in-out infinite;
+}
+@keyframes h3d-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+[data-paused] :is(.h3d-steam, .h3d-float, .h3d-bounce, .h3d-sway) {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .h3d-steam, .h3d-float, .h3d-bounce, .h3d-sway { animation: none; }
+  .h3d-steam { opacity: 0.6; }
+}

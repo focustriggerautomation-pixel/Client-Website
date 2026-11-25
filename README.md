@@ -38,6 +38,7 @@ src/
                             visit (hours + map), contact (CTA band), footer
   components/header/     ← sticky header + mobile menu (shared, mood-styled)
   lib/                   ← shared data logic: hours / open-now, prices, signature items
+  hero3d/                ← 3D hero: Hero3D slot + fallbacks (main bundle), scene/ (lazy 3D chunk)
   motion/                ← animation layer: MotionProvider (Lenis, reduced motion, intro),
                             MotionLayer (reveals, parallax, tilt, magnets, header), GalleryStage, Lightbox
   pages/                 ← cafe page, private index, 404, config-error page
@@ -68,6 +69,9 @@ in `cafes/` for complete examples. Notes:
   runs past midnight.
 - **timezone** (optional, default `"Asia/Kolkata"`): IANA name like `"Asia/Dubai"` or `"Europe/London"`.
   "Open now / Closed" and today's highlighted row use the cafe's zone, not the visitor's.
+- **hero3d** (optional, default `true`): real-time 3D object in the hero — a ceramic cup with steam and coffee
+  beans (dark-premium), an iced latte with ice and sprinkles (bright-cafe), a steaming bowl on a plate with cutlery
+  (warm-restaurant). Built procedurally in code and coloured from `brand`. `false` removes it.
 - **headings** (optional): override any section's kicker and/or title, e.g.
   `"headings": { "menu": { "kicker": "Carta", "title": "Tonight’s menu" } }`. Sections: `about`, `menu`,
   `signatures`, `gallery`, `reviews`, `visit`, `contact`. Anything omitted keeps the mood's default copy
@@ -93,12 +97,28 @@ swaps motion too.
   transitions triggered by an IntersectionObserver; Lenis is used for mouse/trackpad only (phones keep native
   momentum scrolling); headings are split in idle time, never inside a scroll event.
 
+## Hero 3D
+
+Three.js via @react-three/fiber + drei, in `src/hero3d/`. Models are procedural (lathes, extrusions, tubes; no model
+or HDR files). The 3D code is a separate lazy chunk; the hero first shows an illustrated, CSS-animated version of
+the same object (`Fallbacks.tsx`), so it is complete before any 3D loads.
+
+- Loads only after first paint and the intro, in idle time, and only while the hero is on screen.
+- Falls back to the illustration on: reduced motion, Save-Data, < 4 CPU cores, < 4 GB memory, no WebGL, a WebGL
+  context loss, any load/render error, or < 30 fps measured over its first second (rendered invisibly).
+- Renders from GSAP's ticker (one frame loop with Lenis/ScrollTrigger); pauses off-screen and in hidden tabs;
+  DPR capped at 1.5 on touch screens. Reacts to pointer (desktop) / device tilt (phones) and rotates + zooms as
+  the hero scrolls away.
+- Debug: `?hero3d=fallback` forces the illustration, `?hero3d=3d` forces 3D (skips device and fps gates).
+  The stage element reports its state in `data-hero3d` (`3d`, `loading`, `fallback:<reason>`).
+
 ## QA scripts
 
 `npm test` (open-now logic) needs nothing extra. The browser checks in `tests/browser/` need Playwright
 (`npm i -D playwright && npx playwright install chromium`) and a running `npm run preview`:
 `layout.cjs` (overflow, images, every section visible after scrolling), `interaction.cjs`, `reduced-motion.cjs`,
-`contrast.cjs`, and `perf.cjs <slug> mobile` (frame timing under 4× CPU throttle).
+`contrast.cjs`, `hero3d.cjs` (forced fallbacks, lazy loading, pausing, DPR cap), and
+`perf.cjs <slug> mobile` (frame timing under 4× CPU throttle).
 
 ## Images
 

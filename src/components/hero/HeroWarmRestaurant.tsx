@@ -1,6 +1,7 @@
 import { SECTION_IDS } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { ActionLink } from '../ActionLink.tsx';
+import { Hero3D } from '../../hero3d/Hero3D.tsx';
 import { Img } from '../Img.tsx';
 import { OpenStatus } from '../OpenStatus.tsx';
 import { Ornament } from '../Ornament.tsx';
@@ -11,7 +12,7 @@ export function HeroWarmRestaurant() {
   return (
     <section id={SECTION_IDS.top} aria-label={cafe.name} className="paper relative overflow-x-clip bg-bg pt-[4.5rem] text-ink md:pt-20">
       <div className="lg:grid lg:min-h-[calc(100svh-5rem)] lg:grid-cols-[1.2fr_1fr]">
-        <div data-parallax="1.4" className="px-3 pt-3 sm:px-6 sm:pt-6 lg:order-2 lg:p-0">
+        <div data-parallax="1.4" className="relative px-3 pt-3 sm:px-6 sm:pt-6 lg:order-2 lg:p-0">
           <Img
             path={cafe.hero.heroImage}
             alt={`${cafe.name}: ${cafe.hero.headline}`}
@@ -20,6 +21,8 @@ export function HeroWarmRestaurant() {
             data-hero="media"
             className="aspect-[4/3] w-full rounded-image object-cover sm:aspect-[16/10] lg:aspect-auto lg:h-full lg:rounded-none lg:rounded-bl-[7rem]"
           />
+          {/* 3D plate over the food photo (above the headline on phones). */}
+          <Hero3D className="absolute -bottom-4 left-1/2 aspect-square w-[66%] max-w-[22rem] -translate-x-1/2 sm:w-[44%] lg:bottom-6 lg:left-6 lg:w-[66%] lg:max-w-[36rem] lg:translate-x-0" />
         </div>
 
         <div className="flex flex-col items-center px-[clamp(1.25rem,5vw,3rem)] pb-16 pt-10 text-center lg:items-start lg:justify-center lg:py-16 lg:pl-[max(3rem,calc((100vw-var(--container))/2+3rem))] lg:pr-12 lg:text-left">

@@ -24,6 +24,9 @@ const [,, slug, mode = 'mobile', query = ''] = process.argv;
   await p.waitForSelector('main section', { timeout: 30000 });
   await p.waitForFunction(() => !document.querySelector('[data-intro]'), null, { timeout: 15000 });
   await p.waitForTimeout(2500); // hero timeline
+  // 3D hero: wait until it has loaded and decided (3D or fallback), so scroll is measured on its own
+  await p.waitForFunction(() => { const s = document.querySelector('[data-hero3d]'); return !s || s.dataset.hero3d !== 'loading'; }, null, { timeout: 30000 }).catch(() => {});
+  const h3d = await p.evaluate(() => document.querySelector('[data-hero3d]')?.dataset.hero3d ?? 'none');
   const stats = (frames, long) => {
     const d = []; for (let i = 1; i < frames.length; i++) d.push(frames[i][0] - frames[i - 1][0]);
     const s = [...d].sort((a, b) => a - b);
@@ -31,7 +34,7 @@ const [,, slug, mode = 'mobile', query = ''] = process.argv;
   };
   const intro = await p.evaluate(() => ({ introMs: window.__intro.shown ? Math.round(window.__intro.gone - window.__intro.shown) : null }));
   const load = await p.evaluate(() => ({ frames: window.__frames, long: window.__long }));
-  console.log(`${slug} ${mode}${query} | intro+hero`, JSON.stringify({ ...intro, ...stats(load.frames, load.long) }));
+  console.log(`${slug} ${mode}${query} | intro+hero+3d-setup (hero3d=${h3d})`, JSON.stringify({ ...intro, ...stats(load.frames, load.long) }));
 
   // Scroll the whole page with real scroll gestures (touch on mobile, wheel on desktop → Lenis).
   await p.evaluate(() => { window.__frames = []; window.__long = []; });

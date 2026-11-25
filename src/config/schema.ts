@@ -136,6 +136,12 @@ export const cafeConfigSchema = z.strictObject({
     })
     .optional(),
 
+  /**
+   * Real-time 3D object in the hero (cup / iced latte / plate, by mood), coloured from the brand.
+   * Weak devices automatically get an animated illustration of the same object instead. Default true.
+   */
+  hero3d: z.boolean({ error: 'hero3d must be true or false' }).default(true),
+
   hero: z.strictObject(
     {
       headline: nonEmpty('hero.headline'),
