@@ -1,4 +1,5 @@
-import { DAYS, dayIntervals, type CafeConfig, type Day, type Interval } from '../config/schema.ts';
+import { DAYS, dayIntervals, type Day } from '../config/model.ts';
+import type { CafeConfig, Interval } from '../config/schema.ts';
 
 export const DAY_NAMES: Record<Day, { short: string; long: string }> = {
   mon: { short: 'Mon', long: 'Monday' },
@@ -53,7 +54,13 @@ export function weekRows(hours: CafeConfig['hours'], now: Date, timeZone: string
   const { day: today } = zonedNow(now, timeZone);
   return DAYS.map((day) => {
     const intervals = dayIntervals(hours[day]);
-    return { day, name: DAY_NAMES[day], intervals, text: formatIntervals(intervals), isToday: day === today };
+    return {
+      day,
+      name: DAY_NAMES[day],
+      intervals,
+      text: formatIntervals(intervals),
+      isToday: day === today,
+    };
   });
 }
 
@@ -74,23 +81,45 @@ export function openStatus(hours: CafeConfig['hours'], now: Date, timeZone: stri
 
   // Still open from yesterday's past-midnight interval?
   for (const iv of yesterdays) {
-    if (overnight(iv) && nowMin < closeMin(iv.close)) return { open: true, today, headline: 'Open now', detail: `until ${formatTime(iv.close)}` };
+    if (overnight(iv) && nowMin < closeMin(iv.close))
+      return {
+        open: true,
+        today,
+        headline: 'Open now',
+        detail: `until ${formatTime(iv.close)}`,
+      };
   }
   for (const iv of todays) {
     const o = toMin(iv.open);
     if (overnight(iv) ? nowMin >= o : nowMin >= o && nowMin < closeMin(iv.close)) {
-      return { open: true, today, headline: 'Open now', detail: `until ${formatTime(iv.close)}` };
+      return {
+        open: true,
+        today,
+        headline: 'Open now',
+        detail: `until ${formatTime(iv.close)}`,
+      };
     }
   }
 
   const later = todays.find((iv) => toMin(iv.open) > nowMin);
-  if (later) return { open: false, today, headline: 'Closed now', detail: `opens at ${formatTime(later.open)}` };
+  if (later)
+    return {
+      open: false,
+      today,
+      headline: 'Closed now',
+      detail: `opens at ${formatTime(later.open)}`,
+    };
   for (let n = 1; n <= 7; n++) {
     const day = dayOffset(today, n);
     const first = dayIntervals(hours[day])[0];
     if (first) {
       const when = n === 1 ? 'tomorrow' : DAY_NAMES[day].long;
-      return { open: false, today, headline: 'Closed now', detail: `opens ${when} at ${formatTime(first.open)}` };
+      return {
+        open: false,
+        today,
+        headline: 'Closed now',
+        detail: `opens ${when} at ${formatTime(first.open)}`,
+      };
     }
   }
   return { open: false, today, headline: 'Closed', detail: '' };

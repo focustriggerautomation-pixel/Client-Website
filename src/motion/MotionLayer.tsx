@@ -40,7 +40,11 @@ export function MotionLayer({ children }: { children: ReactNode }) {
         queueMicrotask(() => ctx.revert());
       }
     },
-    { scope, dependencies: [reduced, finePointer, P, off], revertOnUpdate: true },
+    {
+      scope,
+      dependencies: [reduced, finePointer, P, off],
+      revertOnUpdate: true,
+    },
   );
 
   function setup(cs: <T extends (...args: never[]) => unknown>(fn: T) => T) {
@@ -80,9 +84,20 @@ export function MotionLayer({ children }: { children: ReactNode }) {
       gsap.set(el, { opacity: 1 });
       if (reduced) return gsap.from(el, { opacity: 0, duration: 0.5 });
       const words = P.split === 'words';
-      const split = SplitText.create(el, { type: words ? 'words' : 'lines', mask: words ? undefined : 'lines' });
+      const split = SplitText.create(el, {
+        type: words ? 'words' : 'lines',
+        mask: words ? undefined : 'lines',
+      });
       return gsap.from(words ? split.words : split.lines, {
-        ...(words ? { y: '0.55em', rotate: 7, scale: 0.85, opacity: 0, transformOrigin: '0% 100%' } : { yPercent: 115 }),
+        ...(words
+          ? {
+              y: '0.55em',
+              rotate: 7,
+              scale: 0.85,
+              opacity: 0,
+              transformOrigin: '0% 100%',
+            }
+          : { yPercent: 115 }),
         duration: P.reveal,
         ease: P.textEase,
         stagger: words ? P.stagger * 0.8 : P.stagger,
@@ -92,7 +107,8 @@ export function MotionLayer({ children }: { children: ReactNode }) {
 
     // ── 1. Hero: hidden now (behind the loader), played when the intro hands over.
     const hero = root.querySelector<HTMLElement>('#top');
-    if (hero) {
+    const alreadyVisible = (window as Window & { __heroAlreadyVisible?: boolean }).__heroAlreadyVisible;
+    if (hero && !alreadyVisible) {
       const pick = (k: string) => $(`[data-hero="${k}"]`, hero);
       const [media, kicker, sub, cta, deco] = ['media', 'kicker', 'sub', 'cta', 'deco'].map(pick);
       const title = pick('title')[0];
@@ -108,8 +124,29 @@ export function MotionLayer({ children }: { children: ReactNode }) {
           .from(cta, { opacity: 0, y: 26, duration: 1.2, stagger: 0.12 }, 0.95);
         if (title) tl.call(() => void revealText(title), [], 0.35);
       } else if (P.intro === 'pop') {
-        tl.from(kicker, { opacity: 0, scale: 0.4, rotate: -16, duration: 0.7, ease: 'back.out(2.6)' }, 0)
-          .from(media, { opacity: 0, y: 90, rotate: -9, scale: 0.85, duration: 1.05, ease: 'back.out(1.5)' }, 0.1)
+        tl.from(
+          kicker,
+          {
+            opacity: 0,
+            scale: 0.4,
+            rotate: -16,
+            duration: 0.7,
+            ease: 'back.out(2.6)',
+          },
+          0,
+        )
+          .from(
+            media,
+            {
+              opacity: 0,
+              y: 90,
+              rotate: -9,
+              scale: 0.85,
+              duration: 1.05,
+              ease: 'back.out(1.5)',
+            },
+            0.1,
+          )
           .from(deco, { scale: 0, duration: 0.8, stagger: 0.12, ease: 'back.out(2.6)' }, 0.35)
           .from(sub, { opacity: 0, y: 22, duration: 0.7 }, 0.45)
           .from(cta, { opacity: 0, y: 26, scale: 0.9, duration: 0.75, stagger: 0.08 }, 0.55);
@@ -198,7 +235,11 @@ export function MotionLayer({ children }: { children: ReactNode }) {
     const hidePart = words ? 'translateY(0.55em) rotate(7deg) scale(0.85)' : 'translateY(115%)';
     const prepare = (el: HTMLElement) => {
       if (splits.has(el) || reduced) return;
-      const entry = { split: null as unknown as SplitText, parts: [] as HTMLElement[], revealed: false };
+      const entry = {
+        split: null as unknown as SplitText,
+        parts: [] as HTMLElement[],
+        revealed: false,
+      };
       entry.split = SplitText.create(el, {
         type: words ? 'words' : 'lines',
         mask: words ? undefined : 'lines',
@@ -282,7 +323,17 @@ export function MotionLayer({ children }: { children: ReactNode }) {
       const isHero = section.id === 'top';
       const travel = (Number(el.dataset.parallax) || 0) * P.parallax;
       const scale = Number(el.dataset.parallaxScale) || 1;
-      return { el, section, isHero, travel, scale, from: { y: isHero ? 0 : -travel / 2, ...(scale !== 1 ? { scale } : {}) } as gsap.TweenVars };
+      return {
+        el,
+        section,
+        isHero,
+        travel,
+        scale,
+        from: {
+          y: isHero ? 0 : -travel / 2,
+          ...(scale !== 1 ? { scale } : {}),
+        } as gsap.TweenVars,
+      };
     });
     gsap.set(
       layers.map((l) => l.el),
@@ -302,7 +353,12 @@ export function MotionLayer({ children }: { children: ReactNode }) {
         ...(el.hasAttribute('data-parallax-fade') ? { opacity: 0.15 } : {}),
         ease: 'none',
         // scrub: true (direct). A numeric scrub restarts a catch-up tween on every scroll event — measurable on phones.
-        scrollTrigger: { trigger: section, start: isHero ? 'top top' : 'top bottom', end: 'bottom top', scrub: true },
+        scrollTrigger: {
+          trigger: section,
+          start: isHero ? 'top top' : 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
       };
       gsap.fromTo(el, from, to);
     }
@@ -314,8 +370,14 @@ export function MotionLayer({ children }: { children: ReactNode }) {
     if (finePointer) {
       for (const el of tilts) {
         let rect: DOMRect | null = null;
-        const rx = gsap.quickTo(el, 'rotationX', { duration: 0.5, ease: 'power3.out' });
-        const ry = gsap.quickTo(el, 'rotationY', { duration: 0.5, ease: 'power3.out' });
+        const rx = gsap.quickTo(el, 'rotationX', {
+          duration: 0.5,
+          ease: 'power3.out',
+        });
+        const ry = gsap.quickTo(el, 'rotationY', {
+          duration: 0.5,
+          ease: 'power3.out',
+        });
         on(el, 'pointerenter', () => {
           rect = el.getBoundingClientRect(); // measure once, not per move
           gsap.set(el, { transformPerspective: 900 });
@@ -348,7 +410,10 @@ export function MotionLayer({ children }: { children: ReactNode }) {
         let s = setters.get(el);
         if (!s) {
           gsap.set(el, { transformPerspective: 900 });
-          s = gsap.quickTo(el, 'rotationX', { duration: 0.6, ease: 'power3.out' });
+          s = gsap.quickTo(el, 'rotationX', {
+            duration: 0.6,
+            ease: 'power3.out',
+          });
           setters.set(el, s);
         }
         return s;
@@ -394,7 +459,13 @@ export function MotionLayer({ children }: { children: ReactNode }) {
         });
         on(el, 'pointerleave', () => {
           rect = null;
-          gsap.to(el, { x: 0, y: 0, duration: 0.9, ease: P.magnetReturn, overwrite: true });
+          gsap.to(el, {
+            x: 0,
+            y: 0,
+            duration: 0.9,
+            ease: P.magnetReturn,
+            overwrite: true,
+          });
         });
       }
     }

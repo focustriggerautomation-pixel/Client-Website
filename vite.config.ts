@@ -1,10 +1,12 @@
-import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VARIANT_RE } from './src/config/images.ts';
+import { loadCafeFromDisk } from './scripts/lib/cafes.ts';
 import { readImageManifest, renderVariant } from './scripts/lib/images.ts';
+import { CafeConfigError } from './src/config/model.ts';
 
 const CAFES_DIR = path.resolve(import.meta.dirname, 'cafes');
 
@@ -29,18 +31,20 @@ function cafeConfigModule(): Plugin {
     load(id) {
       const m = /^(.*\/cafes\/([^/]+))\/config\.json\?cafe$/.exec(id);
       if (!m) return null;
-      const [, dir] = m;
-      const file = path.join(dir, 'config.json');
-      this.addWatchFile(file);
-      let config: unknown;
+      const [, dir, slug] = m;
+      this.addWatchFile(path.join(dir, 'config.json'));
+      // Validate here, in Node (zod never ships to the browser): defaults applied, or readable problems for the
+      // dev error page. Production builds never get here with an invalid config (`npm run check` runs first).
+      let config: unknown = null;
+      let problems: string[] = [];
       try {
-        config = JSON.parse(readFileSync(file, 'utf8'));
+        config = loadCafeFromDisk(slug).config;
       } catch (e) {
-        // Let the page show a readable error instead of crashing the dev server.
-        config = { __jsonError: (e as Error).message };
+        if (!(e instanceof CafeConfigError)) throw e;
+        problems = e.problems;
       }
       // Emit JS explicitly: with the ?cafe query the bundler would not treat this as JSON.
-      return { code: `export default ${JSON.stringify({ config, images: readImageManifest(dir) })};`, moduleType: 'js' };
+      return { code: `export default ${JSON.stringify({ config, images: readImageManifest(dir), problems })};`, moduleType: 'js' };
     },
   };
 }
@@ -65,15 +69,16 @@ function cafeImagesDevServer(): Plugin {
         if (!file.startsWith(CAFES_DIR + path.sep) || !existsSync(file) || !statSync(file).isFile()) return next();
 
         if (variant) {
-          const key = `${file}@${variant[2]}@${statSync(file).mtimeMs}`;
+          const format = variant[3] as 'avif' | 'webp';
+          const key = `${file}@${variant[2]}@${format}@${statSync(file).mtimeMs}`;
           const hit = cache.get(key);
           const send = (buf: Buffer) => {
-            res.setHeader('Content-Type', 'image/webp');
+            res.setHeader('Content-Type', `image/${format}`);
             res.setHeader('Cache-Control', 'no-cache');
             res.end(buf);
           };
           if (hit) return send(hit);
-          renderVariant(file, Number(variant[2])).then((buf) => {
+          renderVariant(file, Number(variant[2]), format).then((buf) => {
             cache.set(key, buf);
             send(buf);
           }, next);

@@ -75,18 +75,35 @@ const fallbackShown = (p) =>
     await ctx.close();
   }
 
-  // 6: lazy loading + natural low-fps fallback (software WebGL here is slow once composited)
+  // 6: this test browser has no GPU (SwiftShader): the automatic path must settle on the illustration
+  //    *before* downloading the 3D chunk.
   {
     const { ctx, p, chunks, errors } = await open(b, '/tamarind-house');
-    const t0 = Date.now();
-    const h1Visible = await p.evaluate(() => {
-      const h = document.querySelector('#top h1');
-      return !!h && h.textContent.length > 0;
-    });
     await settle(p);
     const s = await state(p);
-    void t0;
-    // In the page's own clock: when did the hero first paint, when did the 3D chunk start downloading, when did 3D mount?
+    await p.waitForTimeout(3000);
+    ok(
+      s === 'fallback:software-gl' && chunks.length === 0 && (await fallbackShown(p)) && !errors.length,
+      `software WebGL: illustration, 3D chunk never downloaded (state=${s}, chunk requests=${chunks.length})`,
+    );
+    await ctx.close();
+  }
+
+  // 6b: pretend the GPU is real (spoofed renderer string) to exercise lazy loading and the fps gate
+  {
+    const spoof = () => {
+      const fake = (orig) =>
+        function (p) {
+          return p === 0x9246 || p === 0x1f01 ? 'ANGLE (Hardware GPU)' : orig.call(this, p);
+        };
+      WebGLRenderingContext.prototype.getParameter = fake(WebGLRenderingContext.prototype.getParameter);
+      WebGL2RenderingContext.prototype.getParameter = fake(WebGL2RenderingContext.prototype.getParameter);
+    };
+    const { ctx, p, chunks, errors } = await open(b, '/tamarind-house', { init: spoof });
+    const h1Visible = await p.evaluate(() => !!document.querySelector('#top h1')?.textContent);
+    await settle(p);
+    const s = await state(p);
+    // In the page's own clock: when did the hero first paint, when did the 3D chunk start downloading?
     const tl = await p.evaluate(() => ({
       fcp: Math.round(performance.getEntriesByName('first-contentful-paint')[0]?.startTime ?? -1),
       chunk: Math.round(performance.getEntriesByType('resource').find((e) => /\/assets\/Scene-/.test(e.name))?.startTime ?? -1),
@@ -95,11 +112,9 @@ const fallbackShown = (p) =>
       h1Visible && tl.fcp > 0 && tl.chunk > tl.fcp && chunks.length === 1,
       `lazy: hero painted at ${tl.fcp}ms, 3D chunk fetched from ${tl.chunk}ms (after first paint, in idle time)`,
     );
-    ok(
-      s === 'fallback:low-fps' || /^3d/.test(s),
-      `automatic path settles (state=${s}${s === 'fallback:low-fps' ? ' — software WebGL measured below 30fps' : ''})`,
-    );
-    if (s === 'fallback:low-fps') ok((await fallbackShown(p)) && !errors.length, 'low-fps: canvas removed, illustration kept');
+    ok(s === 'fallback:low-fps' || /^3d/.test(s), `"hardware" path runs the fps gate (state=${s})`);
+    if (s === 'fallback:low-fps')
+      ok((await fallbackShown(p)) && !errors.length, 'low-fps: canvas removed, illustration kept');
     await ctx.close();
   }
 

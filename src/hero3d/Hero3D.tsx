@@ -1,7 +1,8 @@
 import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useMotion } from '../motion/MotionProvider.tsx';
 import { useCafe } from '../theme/ThemeProvider.tsx';
-import { decide3D } from './capability.ts';
+import { decide3D, type Decision } from './capability.ts';
+import { useHydrated } from '../lib/useHydrated.ts';
 import { CupFallback, GlassFallback, PlateFallback } from './Fallbacks.tsx';
 import { palette3D } from './palette.ts';
 
@@ -24,7 +25,11 @@ class Boundary extends Component<{ onError: () => void; children: ReactNode }, {
   }
 }
 
-const FALLBACKS = { 'dark-premium': CupFallback, 'bright-cafe': GlassFallback, 'warm-restaurant': PlateFallback };
+const FALLBACKS = {
+  'dark-premium': CupFallback,
+  'bright-cafe': GlassFallback,
+  'warm-restaurant': PlateFallback,
+};
 
 /**
  * The hero's 3D object slot. Renders the illustrated (CSS-animated) version immediately — so the hero is
@@ -32,12 +37,24 @@ const FALLBACKS = { 'dark-premium': CupFallback, 'bright-cafe': GlassFallback, '
  * first paint + the intro, keeps it invisible while it proves it can hold a decent frame rate, and crossfades.
  * Any failure (old device, no WebGL, chunk/load error, lost context, low fps) settles on the illustration.
  */
-export function Hero3D({ className = '' }: { className?: string }) {
+export function Hero3D({
+  className = '',
+  allow3d = true,
+}: {
+  className?: string;
+  /** false: illustration only (e.g. the hidden responsive placement). */ allow3d?: boolean;
+}) {
   const { cafe, theme } = useCafe();
   const { reduced, introDone } = useMotion();
   const palette = useMemo(() => palette3D(theme), [theme]);
-  const decision = useMemo(() => decide3D(reduced), [reduced]);
-  const [status, setStatus] = useState<Status>(() => (decision.try3d ? { kind: 'loading' } : { kind: 'fallback', reason: decision.reason }));
+  // The device check runs only after hydration: the prerendered page always starts with the illustration.
+  const hydrated = useHydrated();
+  const decision = useMemo(
+    () => (hydrated ? decide3D(reduced) : ({ try3d: false, reason: 'ssr' } satisfies Decision)),
+    [hydrated, reduced],
+  );
+  const [loadStatus, setStatus] = useState<Status>({ kind: 'loading' });
+  const status: Status = decision.try3d ? loadStatus : { kind: 'fallback', reason: decision.reason };
   const [mount, setMount] = useState(false);
 
   const stage = useRef<HTMLDivElement>(null);
@@ -53,7 +70,7 @@ export function Hero3D({ className = '' }: { className?: string }) {
   }, []);
 
   useEffect(() => {
-    if (!decision.try3d || !cafe.hero3d) return;
+    if (!decision.try3d || !cafe.hero3d || !allow3d) return;
     let alive = true;
     let io: IntersectionObserver | undefined;
     const idle = (fn: () => void, timeout: number) =>
@@ -86,7 +103,7 @@ export function Hero3D({ className = '' }: { className?: string }) {
       alive = false;
       io?.disconnect();
     };
-  }, [decision, introDone, cafe.hero3d]);
+  }, [decision, introDone, cafe.hero3d, allow3d]);
 
   // Stable callbacks: a status change here must never re-render the 3D scene (that re-ran its effects and
   // regenerated the environment map — an ~8s stall in software WebGL).
@@ -102,6 +119,7 @@ export function Hero3D({ className = '' }: { className?: string }) {
     <div
       ref={stage}
       aria-hidden
+      data-hero="object"
       data-hero3d={status.kind === 'fallback' ? `fallback:${status.reason}` : status.kind}
       data-hero3d-fps={status.kind === '3d' ? status.fps : undefined}
       className={`pointer-events-none select-none ${className}`}
@@ -116,7 +134,13 @@ export function Hero3D({ className = '' }: { className?: string }) {
         <Boundary onError={() => fail('error')}>
           <Suspense fallback={null}>
             {/* 0.01, not 0, while measuring: an opacity:0 layer can skip compositing, which would flatter the fps check. */}
-            <div className="absolute inset-0" style={{ opacity: show3d ? 1 : 0.01, transition: 'opacity .8s ease' }}>
+            <div
+              className="absolute inset-0"
+              style={{
+                opacity: show3d ? 1 : 0.01,
+                transition: 'opacity .8s ease',
+              }}
+            >
               <Scene palette={palette} gate={gate} onReady={ready} onFail={fail} />
             </div>
           </Suspense>

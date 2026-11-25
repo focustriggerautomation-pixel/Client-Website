@@ -6,14 +6,17 @@ import { z } from 'zod';
  * DOM / Node APIs.
  */
 
-export const MOODS = ['dark-premium', 'bright-cafe', 'warm-restaurant'] as const;
-export type Mood = (typeof MOODS)[number];
+import {
+  CafeConfigError,
+  DAYS,
+  HEADING_SECTIONS,
+  MOODS,
+  RESERVED_SLUGS,
+  type Day,
+  type HeadingSection,
+} from './model.ts';
 
-export const DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
-export type Day = (typeof DAYS)[number];
-
-/** Folder names under /cafes that can never be slugs (they clash with build output). */
-export const RESERVED_SLUGS = ['assets', 'images', 'fonts', 'api', 'index', '404'];
+export * from './model.ts';
 
 const nonEmpty = (what: string) => z.string({ error: `${what} is required` }).trim().min(1, `${what} must not be empty`);
 
@@ -63,8 +66,6 @@ const heading = z.strictObject({
   kicker: z.string().trim().min(1, 'heading kicker must not be empty').optional(),
   title: z.string().trim().min(1, 'heading title must not be empty').optional(),
 });
-export const HEADING_SECTIONS = ['about', 'menu', 'signatures', 'gallery', 'reviews', 'visit', 'contact'] as const;
-export type HeadingSection = (typeof HEADING_SECTIONS)[number];
 
 const googleFont = z.strictObject({
   /** Google Fonts family name exactly as on fonts.google.com, e.g. "Playfair Display". */
@@ -80,7 +81,9 @@ const menuItem = z.strictObject({
   name: nonEmpty('menu item name'),
   description: z.string().trim().default(''),
   /** A number is shown with menu.currency (e.g. 320 -> "₹320"); a string is shown as-is (e.g. "₹320 / ₹420"). */
-  price: z.union([z.number().nonnegative(), nonEmpty('price')], { error: 'price is required (number or text)' }),
+  price: z.union([z.number().nonnegative(), nonEmpty('price')], {
+    error: 'price is required (number or text)',
+  }),
   image: imagePath.optional(),
   /**
    * Short label, e.g. "Bestseller", "Signature", "Veg", "Non-veg", "Vegan", "New", "Spicy".
@@ -100,11 +103,18 @@ const review = z.strictObject({
 export const cafeConfigSchema = z.strictObject({
   slug: z
     .string({ error: 'slug is required' })
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'slug must be lowercase letters, numbers and single hyphens, e.g. "blue-tokai"')
-    .refine((s) => !RESERVED_SLUGS.includes(s), { message: `slug cannot be one of: ${RESERVED_SLUGS.join(', ')}` }),
+    .regex(
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      'slug must be lowercase letters, numbers and single hyphens, e.g. "blue-tokai"',
+    )
+    .refine((s) => !RESERVED_SLUGS.includes(s), {
+      message: `slug cannot be one of: ${RESERVED_SLUGS.join(', ')}`,
+    }),
   name: nonEmpty('name'),
   tagline: nonEmpty('tagline'),
-  mood: z.enum(MOODS, { error: `mood must be one of: ${MOODS.map((m) => `"${m}"`).join(', ')}` }),
+  mood: z.enum(MOODS, {
+    error: `mood must be one of: ${MOODS.map((m) => `"${m}"`).join(', ')}`,
+  }),
 
   /** Optional SEO / link-preview overrides. Defaults: "<name> — <tagline>" and hero.subheadline. */
   seo: z
@@ -227,13 +237,17 @@ export const cafeConfigSchema = z.strictObject({
         .transform((s) => s.trim().replace(/^@/, ''))
         .pipe(z.string().regex(/^[A-Za-z0-9._]{1,30}$/, 'contact.instagram must be a handle like "bluetokaicoffee" (no URL)')),
     },
-    { error: 'contact is required: { "address", "mapsEmbedUrl", "phone", "whatsapp", "instagram" }' },
+    {
+      error: 'contact is required: { "address", "mapsEmbedUrl", "phone", "whatsapp", "instagram" }',
+    },
   ),
 
   cta: z.strictObject(
     {
       text: nonEmpty('cta.text'),
-      action: z.enum(['whatsapp', 'call', 'maps'], { error: 'cta.action must be "whatsapp", "call" or "maps"' }),
+      action: z.enum(['whatsapp', 'call', 'maps'], {
+        error: 'cta.action must be "whatsapp", "call" or "maps"',
+      }),
       /** Pre-filled WhatsApp message (used by every WhatsApp button on the page). */
       message: z.string().trim().optional(),
       /** Headline of the contact band near the bottom of the page. Defaults to a mood-specific line with the cafe name. */
@@ -247,27 +261,24 @@ export const cafeConfigSchema = z.strictObject({
         })
         .optional(),
     },
-    { error: 'cta is required: { "text", "action": "whatsapp" | "call" | "maps" }' },
+    {
+      error: 'cta is required: { "text", "action": "whatsapp" | "call" | "maps" }',
+    },
   ),
 
   /** Small "Concept by …" ribbon. */
-  agencyCredit: z.strictObject({ name: nonEmpty('agencyCredit.name'), url: z.url('agencyCredit.url must be a full URL') }).optional(),
+  agencyCredit: z
+    .strictObject({
+      name: nonEmpty('agencyCredit.name'),
+      url: z.url('agencyCredit.url must be a full URL'),
+    })
+    .optional(),
 });
 
 /** Shape as written in config.json (before defaults/transforms). */
 export type CafeConfigInput = z.input<typeof cafeConfigSchema>;
 /** Shape after validation (defaults applied). */
 export type CafeConfig = z.output<typeof cafeConfigSchema>;
-
-export class CafeConfigError extends Error {
-  constructor(
-    public readonly source: string,
-    public readonly problems: string[],
-  ) {
-    super(`Invalid cafe config ${source}:\n${problems.map((p) => `  • ${p}`).join('\n')}`);
-    this.name = 'CafeConfigError';
-  }
-}
 
 /** Turn zod issues into one human-readable line each: `brand.primary: must be a hex colour …` */
 export function formatIssues(issues: readonly z.core.$ZodIssue[]): string[] {
@@ -291,22 +302,4 @@ export function parseCafeConfig(raw: unknown, source: string, expectedSlug?: str
     throw new CafeConfigError(source, [`slug: "${result.data.slug}" must match its folder name "${expectedSlug}"`]);
   }
   return result.data;
-}
-
-/** All image paths a config references (for build-time existence checks). */
-export function referencedImages(c: CafeConfig): string[] {
-  const out = [c.hero.heroImage, ...c.about.images, ...c.gallery];
-  if (c.brand.logo) out.push(c.brand.logo);
-  for (const cat of c.menu.categories) for (const item of cat.items) if (item.image) out.push(item.image);
-  return [...new Set(out)];
-}
-
-/** Normalise a day's hours to a list of intervals ([] = closed). */
-export function dayIntervals(d: DayHours): Interval[] {
-  if (d === 'closed') return [];
-  return Array.isArray(d) ? d : [d];
-}
-
-export function storyParagraphs(c: CafeConfig): string[] {
-  return Array.isArray(c.about.story) ? c.about.story : [c.about.story];
 }

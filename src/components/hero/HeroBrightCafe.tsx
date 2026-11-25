@@ -1,3 +1,4 @@
+import { Words } from './Words.tsx';
 import { SECTION_IDS } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { CtaButton } from '../CtaButton.tsx';
@@ -12,18 +13,26 @@ export const POP =
 /** Sunny split layout: chunky headline, sticker tagline, tilted photo card with hard shadow. */
 export function HeroBrightCafe() {
   const { cafe } = useCafe();
-  // One 3D instance only (one WebGL context): above the headline on phones, popping out of the photo card on desktop.
+  // Placement is CSS-responsive (prerender-safe, no layout jump): above the headline on phones, out of the photo
+  // card on desktop. Only the visible placement may mount WebGL, so there is never more than one context.
   const desktop = useMedia('(min-width: 1024px)');
   return (
     <section id={SECTION_IDS.top} aria-label={cafe.name} className="relative overflow-hidden bg-bg pt-24 text-ink sm:pt-28">
       <div className="container-x grid items-center gap-14 pb-16 pt-6 lg:min-h-[calc(100svh-7rem)] lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:pb-20">
         <div>
-          {!desktop && <Hero3D className="relative mx-auto mb-3 aspect-square w-[64%] max-w-[17rem]" />}
-          <span data-hero="kicker" className="inline-block -rotate-3 rounded-button border-2 border-ink bg-accent px-4 py-1.5 text-step-n1 font-bold text-on-accent shadow-[3px_3px_0_var(--c-ink)]">
+          <Hero3D allow3d={!desktop} className="relative mx-auto mb-3 aspect-square w-[64%] max-w-[17rem] lg:hidden" />
+          <span
+            data-hero="kicker"
+            className="inline-block -rotate-3 rounded-button border-2 border-ink bg-accent px-4 py-1.5 text-step-n1 font-bold text-on-accent shadow-[3px_3px_0_var(--c-ink)]"
+          >
             {cafe.tagline}
           </span>
-          <h1 data-hero="title" className="display mt-7 max-w-[14ch] text-step-6">{cafe.hero.headline}</h1>
-          <p data-hero="sub" className="mt-6 max-w-[40ch] text-step-1 text-muted">{cafe.hero.subheadline}</p>
+          <h1 data-hero="title" className="display mt-7 max-w-[14ch] text-step-6">
+            <Words text={cafe.hero.headline} />
+          </h1>
+          <p data-hero="sub" className="mt-6 max-w-[40ch] text-step-1 text-muted">
+            {cafe.hero.subheadline}
+          </p>
           <div data-hero="cta" className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
             <CtaButton className={`inline-flex rounded-button bg-primary px-8 py-4 text-step-1 font-bold text-on-primary ${POP}`} />
             <a href={`#${SECTION_IDS.menu}`} className="font-bold underline decoration-accent decoration-4 underline-offset-4 hover:decoration-primary">
@@ -46,7 +55,7 @@ export function HeroBrightCafe() {
             data-hero="media"
             className="relative aspect-[4/5] w-full rotate-2 rounded-image border-[3px] border-ink object-cover shadow-[10px_10px_0_var(--c-ink)] lg:aspect-[5/6]"
           />
-          {desktop && <Hero3D className="absolute -bottom-24 -left-36 aspect-square w-[82%]" />}
+          <Hero3D allow3d={desktop} className="absolute -bottom-24 -left-36 hidden aspect-square w-[82%] lg:block" />
         </div>
       </div>
     </section>

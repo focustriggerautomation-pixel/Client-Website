@@ -30,7 +30,8 @@ function SignatureDark() {
                     <Img path={item.image} alt={item.name} sizes="(min-width: 1024px) 55vw, 100vw" className="aspect-[4/3] w-full rounded-image object-cover" />
                   ) : (
                     <div aria-hidden className="grid aspect-[4/3] place-items-center rounded-image border border-line bg-surface p-8">
-                      <span className="display text-center text-step-6 text-primary/30">{item.name}</span>
+                      {/* ghost lettering is decoration: drawn by CSS so it isn't read or audited as text */}
+                      <span data-label={item.name} className="display text-center text-step-6 text-primary/30 before:content-[attr(data-label)]" />
                     </div>
                   )}
                 </div>

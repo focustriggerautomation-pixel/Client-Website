@@ -1,3 +1,4 @@
+import { Words } from './Words.tsx';
 import { SECTION_IDS } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { ActionLink } from '../ActionLink.tsx';
@@ -26,8 +27,12 @@ export function HeroWarmRestaurant() {
         </div>
 
         <div className="flex flex-col items-center px-[clamp(1.25rem,5vw,3rem)] pb-16 pt-10 text-center lg:items-start lg:justify-center lg:py-16 lg:pl-[max(3rem,calc((100vw-var(--container))/2+3rem))] lg:pr-12 lg:text-left">
-          <p data-hero="kicker" className="eyebrow text-primary">{cafe.tagline}</p>
-          <h1 data-hero="title" className="display mt-5 max-w-[16ch] text-step-6">{cafe.hero.headline}</h1>
+          <p data-hero="kicker" className="eyebrow text-primary">
+            {cafe.tagline}
+          </p>
+          <h1 data-hero="title" className="display mt-5 max-w-[16ch] text-step-6">
+            <Words text={cafe.hero.headline} />
+          </h1>
           <Ornament className="my-7" data-hero="deco" />
           <p data-hero="sub" className="max-w-[42ch] text-step-1 text-muted">{cafe.hero.subheadline}</p>
 

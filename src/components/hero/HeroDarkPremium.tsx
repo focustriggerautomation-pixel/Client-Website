@@ -1,3 +1,4 @@
+import { Words } from './Words.tsx';
 import { SECTION_IDS } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { CtaButton } from '../CtaButton.tsx';
@@ -38,8 +39,12 @@ export function HeroDarkPremium() {
           <span aria-hidden className="h-px w-10 shrink-0 bg-primary sm:w-16" />
           {cafe.tagline}
         </p>
-        <h1 data-hero="title" className="display mt-6 max-w-[13ch] text-step-6 sm:mt-8">{cafe.hero.headline}</h1>
-        <p data-hero="sub" className="mt-6 max-w-[46ch] text-step-1 text-muted sm:mt-8">{cafe.hero.subheadline}</p>
+        <h1 data-hero="title" className="display mt-6 max-w-[13ch] text-step-6 sm:mt-8">
+          <Words text={cafe.hero.headline} />
+        </h1>
+        <p data-hero="sub" className="mt-6 max-w-[46ch] text-step-1 text-muted sm:mt-8">
+          {cafe.hero.subheadline}
+        </p>
 
         <div data-hero="cta" className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5 sm:mt-14">
           <CtaButton className="eyebrow inline-flex rounded-button border border-primary bg-primary px-7 py-4 text-on-primary hover:bg-transparent hover:text-primary" />

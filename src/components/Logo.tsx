@@ -1,4 +1,4 @@
-import { imageUrl } from '../config/registry.ts';
+import { imageUrl } from '../config/images.ts';
 import { useCafe } from '../theme/ThemeProvider.tsx';
 
 /** Logo image if the config has one, otherwise a text logo styled by mood. */

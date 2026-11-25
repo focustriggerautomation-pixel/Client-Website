@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "validate": "tsx scripts/validate.ts",
-    "build": "tsx scripts/validate.ts && tsc -b && vite build && tsx scripts/postbuild.ts",
+    "build": "tsx scripts/validate.ts && tsc -b && vite build && tsx --tsconfig tsconfig.app.json scripts/postbuild.ts",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "new-cafe": "tsx scripts/new-cafe.ts",

@@ -1,5 +1,4 @@
 import Lenis from 'lenis';
-import 'lenis/dist/lenis.css';
 import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
 import type { MotionProfile } from '../theme/moods.ts';
 import { useCafe } from '../theme/ThemeProvider.tsx';
@@ -35,10 +34,12 @@ function useMedia(query: string): boolean {
       return () => m.removeEventListener('change', cb);
     },
     () => window.matchMedia(query).matches,
+    () => false, // build-time prerender
   );
 }
 
-const motionParam = () => new URLSearchParams(window.location.search).get('motion');
+const isServer = typeof window === 'undefined';
+const motionParam = () => (isServer ? null : new URLSearchParams(window.location.search).get('motion'));
 
 export function MotionProvider({ children }: { children: ReactNode }) {
   const { cafe, theme } = useCafe();
@@ -50,7 +51,8 @@ export function MotionProvider({ children }: { children: ReactNode }) {
 
   // Intro: decided once per page load.
   const [intro] = useState(() => {
-    const play = !reduced && shouldPlayIntro(cafe.slug);
+    // The prerendered page plays its own (CSS) intro outside this tree — see src/prerender.tsx.
+    const play = !isServer && !reduced && shouldPlayIntro(cafe.slug);
     let resolve!: () => void;
     const promise = new Promise<void>((r) => (resolve = r));
     if (!play) resolve();
@@ -89,7 +91,14 @@ export function MotionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<MotionContextValue>(
-    () => ({ reduced, off, finePointer, profile, lenis, introDone: intro.promise }),
+    () => ({
+      reduced,
+      off,
+      finePointer,
+      profile,
+      lenis,
+      introDone: intro.promise,
+    }),
     [reduced, off, finePointer, profile, lenis, intro.promise],
   );
 

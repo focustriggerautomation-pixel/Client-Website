@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
-import { isRaster, variantPath, variantWidths } from '../config/images.ts';
-import { imageUrl } from '../config/registry.ts';
+import { imageUrl, pictureSources } from '../config/images.ts';
+
 import { useCafe } from '../theme/ThemeProvider.tsx';
 
 type DataAttrs = { [k: `data-${string}`]: string | boolean | undefined };
@@ -17,22 +17,19 @@ interface ImgProps extends DataAttrs {
   priority?: boolean;
 }
 
-/** <img> with intrinsic width/height, WebP srcset, and lazy loading by default. */
+/**
+ * <picture> with AVIF + WebP sources (several widths, picked via `sizes`), an optimised JPEG/PNG fallback,
+ * intrinsic width/height (no layout shift) and lazy loading by default. The <picture> is display:contents,
+ * so classes and data-attributes on the <img> behave exactly as before.
+ */
 export function Img({ path, alt, sizes, className, style, priority, ...data }: ImgProps) {
   const { cafe, images } = useCafe();
-  const meta = images[path];
-  const src = imageUrl(cafe.slug, path);
-  const srcSet =
-    meta && isRaster(path)
-      ? [...variantWidths(meta.w).map((w) => `${imageUrl(cafe.slug, variantPath(path, w))} ${w}w`), `${src} ${meta.w}w`].join(', ')
-      : undefined;
-  return (
+  const p = pictureSources(cafe.slug, path, images[path]);
+  const img = (
     <img
-      src={src}
-      srcSet={srcSet}
-      sizes={srcSet ? sizes : undefined}
-      width={meta?.w}
-      height={meta?.h}
+      src={p?.src ?? imageUrl(cafe.slug, path)}
+      width={p?.width ?? images[path]?.w}
+      height={p?.height ?? images[path]?.h}
       alt={alt}
       loading={priority ? 'eager' : 'lazy'}
       decoding={priority ? 'sync' : 'async'}
@@ -41,5 +38,13 @@ export function Img({ path, alt, sizes, className, style, priority, ...data }: I
       style={style}
       {...data}
     />
+  );
+  if (!p) return img;
+  return (
+    <picture style={{ display: 'contents' }}>
+      <source type="image/avif" srcSet={p.avif} sizes={sizes} />
+      <source type="image/webp" srcSet={p.webp} sizes={sizes} />
+      {img}
+    </picture>
   );
 }

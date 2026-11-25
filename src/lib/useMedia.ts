@@ -9,5 +9,6 @@ export function useMedia(query: string): boolean {
       return () => m.removeEventListener('change', cb);
     },
     () => window.matchMedia(query).matches,
+    () => false, // build-time prerender: no media queries (mobile-first markup)
   );
 }

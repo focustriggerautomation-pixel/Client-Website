@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { imageUrl } from '../config/registry.ts';
+import { imageUrl } from '../config/images.ts';
 import { useCafe } from '../theme/ThemeProvider.tsx';
 import { gsap, SplitText, useGSAP } from './gsap.ts';
 
@@ -46,7 +46,13 @@ export function Intro({ onHandOver, onDone }: { onHandOver: () => void; onDone: 
           onHandOver();
         }
       };
-      const split = name.tagName === 'IMG' ? null : SplitText.create(name, { type: 'chars,words', mask: p.intro === 'curtain' ? 'chars' : undefined });
+      const split =
+        name.tagName === 'IMG'
+          ? null
+          : SplitText.create(name, {
+              type: 'chars,words',
+              mask: p.intro === 'curtain' ? 'chars' : undefined,
+            });
       const parts = split ? (p.intro === 'pop' ? split.words : split.chars) : [name];
 
       // Created paused and started on the next frame: started inside the boot task, its first ~300ms were
@@ -61,7 +67,12 @@ export function Intro({ onHandOver, onDone }: { onHandOver: () => void; onDone: 
       });
       if (p.intro === 'curtain') {
         // dark-premium: letters rise out of a mask, a hairline draws, the curtain lifts.
-        t.from(parts, { yPercent: 110, duration: 0.5, stagger: 0.02, ease: 'expo.out' })
+        t.from(parts, {
+          yPercent: 110,
+          duration: 0.5,
+          stagger: 0.02,
+          ease: 'expo.out',
+        })
           .from(line, { scaleX: 0, duration: 0.55, ease: 'expo.inOut' }, 0.05)
           .add(handOver, 0.62)
           .to(el, { yPercent: -100, duration: 0.5, ease: 'expo.inOut' }, 0.6);
@@ -73,7 +84,13 @@ export function Intro({ onHandOver, onDone }: { onHandOver: () => void; onDone: 
           .to(el, { opacity: 0, scale: 1.04, duration: 0.35, ease: 'power2.in' }, 0.65);
       } else {
         // warm-restaurant: a soft fade-up and the ornament line, then a gentle dissolve.
-        t.from(parts, { opacity: 0, y: 14, duration: 0.5, stagger: 0.015, ease: 'power2.out' })
+        t.from(parts, {
+          opacity: 0,
+          y: 14,
+          duration: 0.5,
+          stagger: 0.015,
+          ease: 'power2.out',
+        })
           .from(line, { scaleX: 0, duration: 0.55, ease: 'power2.inOut' }, 0.1)
           .add(handOver, 0.62)
           .to(el, { opacity: 0, duration: 0.45, ease: 'power1.inOut' }, 0.62);

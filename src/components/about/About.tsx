@@ -1,4 +1,4 @@
-import { storyParagraphs } from '../../config/schema.ts';
+import { storyParagraphs } from '../../config/model.ts';
 import { SECTION_IDS, headingFor } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { byMood } from '../byMood.tsx';
@@ -10,7 +10,10 @@ const alt = (name: string, i: number) => `Inside ${name}, photo ${i + 1}`;
 /** Editorial: text left, an asymmetric, overlapping stack of photos right. */
 function AboutDark() {
   const { cafe } = useCafe();
-  const h = headingFor(useCafe().cafe, 'about', { kicker: 'Our story', title: cafe.about.title });
+  const h = headingFor(useCafe().cafe, 'about', {
+    kicker: 'Our story',
+    title: cafe.about.title,
+  });
   const [a, b, c] = cafe.about.images;
   return (
     <section id={SECTION_IDS.about} aria-labelledby="about-title" className="section-y bg-bg text-ink">
@@ -51,7 +54,10 @@ function AboutDark() {
 /** Playful: story in a tinted rounded card, photos as tilted snapshots. */
 function AboutBright() {
   const { cafe } = useCafe();
-  const h = headingFor(useCafe().cafe, 'about', { kicker: 'Our story', title: cafe.about.title });
+  const h = headingFor(useCafe().cafe, 'about', {
+    kicker: 'Our story',
+    title: cafe.about.title,
+  });
   const imgs = cafe.about.images;
   const tilt = ['-rotate-3', 'rotate-2', '-rotate-1'];
   return (
@@ -89,7 +95,10 @@ function AboutBright() {
 /** Family dining: centred welcome, story set in two calm columns, photos in arches. */
 function AboutWarm() {
   const { cafe } = useCafe();
-  const h = headingFor(useCafe().cafe, 'about', { kicker: 'Our story', title: cafe.about.title });
+  const h = headingFor(useCafe().cafe, 'about', {
+    kicker: 'Our story',
+    title: cafe.about.title,
+  });
   const paras = storyParagraphs(cafe);
   const imgs = cafe.about.images;
   return (
