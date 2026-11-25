@@ -1,144 +1,158 @@
 # Cafe demo sites
 
-Static, no-backend pitch demos for cafes and restaurants. Each prospect gets
-their own private link (`/<slug>`) with their branding, photos and content.
-All per-cafe content lives in **one config file**, so you never touch code.
+Pitch demos for cafes and restaurants. Each business gets its own private link, like
+`your-site.vercel.app/blue-door-cafe`, showing a polished website with their name, colours, menu and photos.
 
-Vite + React + TypeScript + Tailwind CSS v4 → fully static `dist/` → Vercel.
+Everything about one cafe lives in **one folder**: a settings file (`config.json`) and its photos. You never
+need to touch the code.
 
-## Add a new cafe (~10 minutes)
+> **Before you start (once):** install [Node.js 22](https://nodejs.org), then in this folder run `npm install`.
+
+---
+
+## Add a new cafe in 10 minutes
+
+**1. Create it (1 minute).** In a terminal in this folder:
 
 ```bash
-npm run new-cafe -- blue-tokai            # copies an existing cafe as a starting point
-# edit cafes/blue-tokai/config.json
-# drop their photos into cafes/blue-tokai/images/ (or `npm run placeholders` for stand-ins)
-npm run validate                          # lists every missing / invalid field
-npm run dev                               # http://localhost:5173/blue-tokai
+npm run new-cafe
 ```
 
-Commit and push: Vercel rebuilds and the demo is live at `https://<your-domain>/blue-tokai`.
+It asks a few questions: the cafe's name, its link name, a mood (see below), brand colours, phone and
+WhatsApp numbers, address and Instagram handle. Press Enter to accept a suggestion. It then creates the folder
+`cafes/<link-name>/` with everything filled in, including stand-in photos, so the demo works straight away.
 
-Tip: append `?mood=warm-restaurant` (or `dark-premium`, `bright-cafe`) to any demo URL
-to preview the same content in another mood.
+**2. Add their photos (5 minutes).** Put the cafe's photos into `cafes/<link-name>/images/`, using the
+file names it printed (`hero.jpg`, `about-1.jpg`, `menu-1.jpg`, `gallery-1.jpg` … `gallery-6.jpg`), replacing the
+stand-ins.
 
-## Folder structure
+- Photos straight from a phone or saved from Instagram are fine. They are resized and compressed automatically
+  when the site is built; you don't need to shrink anything.
+- Use **.jpg**, **.png** or **.webp**. iPhone **HEIC** photos don't work in browsers: export them as JPG first
+  (or set iPhone → Settings → Camera → Formats → *Most Compatible*).
+- `hero.jpg` is the big first photo and the picture shown when you share the link on WhatsApp. Pick their
+  best wide shot: storefront, interior or signature dish.
+- Optional: add their logo as `logo.png` or `logo.svg` and add `"logo": "images/logo.png"` under `"brand"` in
+  the settings file. Without one, the name is shown in a styled font and the browser-tab icon uses their
+  initials.
 
-```
-cafes/
-  <slug>/
-    config.json          ← everything about this cafe (validated by zod)
-    images/              ← served at /<slug>/images/…
-src/
-  config/schema.ts       ← the config schema + types (single source of truth)
-  config/registry.ts     ← finds cafes, lazy-loads one config per page
-  theme/moods.ts         ← the three mood token sets
-  theme/buildTheme.ts    ← mood + brand colours → CSS variables
-  components/<section>/  ← one variant per mood, picked by the active mood:
-                            hero, about, menu, signature, gallery, reviews,
-                            visit (hours + map), contact (CTA band), footer
-  components/header/     ← sticky header + mobile menu (shared, mood-styled)
-  lib/                   ← shared data logic: hours / open-now, prices, signature items
-  hero3d/                ← 3D hero: Hero3D slot + fallbacks (main bundle), scene/ (lazy 3D chunk)
-  motion/                ← animation layer: MotionProvider (Lenis, reduced motion, intro),
-                            MotionLayer (reveals, parallax, tilt, magnets, header), GalleryStage, Lightbox
-  pages/                 ← cafe page, private index, 404, config-error page
-scripts/
-  validate.ts            ← `npm run validate`
-  postbuild.ts           ← per-slug index.html with title / OG / Twitter tags
-  new-cafe.ts            ← `npm run new-cafe -- <slug>`
-tests/                   ← `npm test` (open-now cases) + browser QA scripts
-  make-placeholders.mjs  ← `npm run placeholders` (gradient stand-in images)
-public/robots.txt        ← disallow all
-vercel.json
+**3. Fill in their details (4 minutes).** Open `cafes/<link-name>/config.json` in any text editor and replace
+the template text with theirs: tagline, headline, story, menu items and prices, and opening hours. Copy their real
+hours from their Google Maps listing.
+
+**4. Check it.**
+
+```bash
+npm run check
 ```
 
-## Config reference
+This lists anything that is broken (must fix) or still generic (fix before pitching): missing photos,
+stand-in photos still in place, template text, placeholder phone numbers, photos too small to look sharp,
+files too big, or a typo in the settings file. Then look at it:
 
-See `src/config/schema.ts` for every field with comments, and the two samples
-in `cafes/` for complete examples. Notes:
+```bash
+npm run dev
+```
 
-- **Image paths** are relative to the cafe folder: `"images/hero.jpg"`. The build fails if a file is missing.
-- **brand**: `primary` required; `accent`, `background` fall back to the mood's palette; no `logo` → styled text logo.
-- **fonts** (optional): `{ "display": { "family": "Playfair Display", "weights": [400, 700], "italic": true } }`. Any Google Font; the weights must exist for that family.
-- **menu prices**: a number gets `menu.currency` (default `₹`) prepended; a string is shown as-is.
-- **menu tags**: items tagged `Bestseller` or `Signature` also appear in the Signature section (hidden if none).
-  `Veg` / `Non-veg` / `Vegan` show the Indian veg/non-veg mark.
-- **reviews**: optional. Only real reviews, copied verbatim with author and source. Never invent reviews. Omit the field if there are none.
-- **hours**: all seven days (`mon`…`sun`), each `{ "open": "08:00", "close": "22:00" }`, a list of those for
-  split days (lunch + dinner), or `"closed"`. `"23:59"` reads as midnight; a close time earlier than the open time
-  runs past midnight.
-- **timezone** (optional, default `"Asia/Kolkata"`): IANA name like `"Asia/Dubai"` or `"Europe/London"`.
-  "Open now / Closed" and today's highlighted row use the cafe's zone, not the visitor's.
-- **hero3d** (optional, default `true`): real-time 3D object in the hero — a ceramic cup with steam and coffee
-  beans (dark-premium), an iced latte with ice and sprinkles (bright-cafe), a steaming bowl on a plate with cutlery
-  (warm-restaurant). Built procedurally in code and coloured from `brand`. `false` removes it.
-- **headings** (optional): override any section's kicker and/or title, e.g.
-  `"headings": { "menu": { "kicker": "Carta", "title": "Tonight’s menu" } }`. Sections: `about`, `menu`,
-  `signatures`, `gallery`, `reviews`, `visit`, `contact`. Anything omitted keeps the mood's default copy
-  (`about.title` and `cta.headline` remain the defaults for those two).
-- **contact.mapsEmbedUrl**: Google Maps → Share → Embed a map → copy the iframe `src`.
-- **cta.action**: `whatsapp` (uses `contact.whatsapp` + optional `cta.message`), `call`, or `maps`.
-  Optional `cta.headline` sets the contact band's headline; `cta.labels.{call,whatsapp,maps}` rename the
-  secondary buttons (defaults depend on the mood, e.g. warm-restaurant says "Call to reserve" / "Order on WhatsApp").
-- **hero image** doubles as the link-preview image: use JPG/PNG under ~600 KB (WhatsApp skips bigger images and can't show SVG).
+and open the link it shows (for example `http://localhost:5173/blue-door-cafe`).
 
-## Motion
+**5. Put it online:** see [Deploying](#deploying) below.
 
-GSAP + ScrollTrigger + Lenis, in `src/motion/`. Sections stay plain markup and opt in with `data-*` attributes
-(documented at the top of `src/motion/MotionLayer.tsx`). Each mood's motion profile lives with its tokens in
-`src/theme/moods.ts` (`motion.gsap`): dark-premium is slow and cinematic (3D fly-through gallery, heavy scroll),
-bright-cafe bouncy (overshoot eases, springy magnets, tilting strip), warm-restaurant soft and calm. `?mood=`
-swaps motion too.
+---
 
-- Hidden start states are set by JS only — no CSS hides content, and if the motion layer throws it reverts itself.
-- `prefers-reduced-motion`: no intro, parallax, pinning, tilt, magnets or smooth scroll; simple fades only.
-- Debug: `?motion=reduced` forces reduced motion, `?motion=off` disables the motion layer (static page).
-- Performance notes (measured on an emulated phone at 4× CPU throttle): scroll reveals run as compositor CSS
-  transitions triggered by an IntersectionObserver; Lenis is used for mouse/trackpad only (phones keep native
-  momentum scrolling); headings are split in idle time, never inside a scroll event.
+## Changing the look
 
-## Hero 3D
+### Mood
 
-Three.js via @react-three/fiber + drei, in `src/hero3d/`. Models are procedural (lathes, extrusions, tubes; no model
-or HDR files). The 3D code is a separate lazy chunk; the hero first shows an illustrated, CSS-animated version of
-the same object (`Fallbacks.tsx`), so it is complete before any 3D loads.
+`"mood"` in `config.json` sets the whole personality of the site: layout, fonts, animation style and 3D object.
 
-- Loads only after first paint and the intro, in idle time, and only while the hero is on screen.
-- Falls back to the illustration on: reduced motion, Save-Data, < 4 CPU cores, < 4 GB memory, no WebGL, a WebGL
-  context loss, any load/render error, or < 30 fps measured over its first second (rendered invisibly).
-- Renders from GSAP's ticker (one frame loop with Lenis/ScrollTrigger); pauses off-screen and in hidden tabs;
-  DPR capped at 1.5 on touch screens. Reacts to pointer (desktop) / device tilt (phones) and rotates + zooms as
-  the hero scrolls away.
-- Debug: `?hero3d=fallback` forces the illustration, `?hero3d=3d` forces 3D (skips device and fps gates).
-  The stage element reports its state in `data-hero3d` (`3d`, `loading`, `fallback:<reason>`).
+| Mood | Feels like | Good for |
+|---|---|---|
+| `dark-premium` | moody, elegant, slow cinematic motion | specialty coffee bars, cocktail cafes, late-night spots |
+| `bright-cafe` | playful, sunny, bouncy motion | bakeries, brunch places, dessert and bubble-tea shops |
+| `warm-restaurant` | homely, traditional, calm motion | family restaurants, regional kitchens, thali places |
 
-## QA scripts
+**Try a different mood without changing anything:** add `?mood=` to the link, for example
+`/blue-door-cafe?mood=dark-premium`. This is handy for showing a client two options on a call.
 
-`npm test` (open-now logic) needs nothing extra. The browser checks in `tests/browser/` need Playwright
-(`npm i -D playwright && npx playwright install chromium`) and a running `npm run preview`:
-`layout.cjs` (overflow, images, every section visible after scrolling), `interaction.cjs`, `reduced-motion.cjs`,
-`contrast.cjs`, `hero3d.cjs` (forced fallbacks, lazy loading, pausing, DPR cap), and
-`perf.cjs <slug> mobile` (frame timing under 4× CPU throttle).
+### Colours
 
-## Images
+Under `"brand"` in `config.json`:
 
-Put originals in `cafes/<slug>/images/` (JPG/PNG/WebP, ideally ≤ 2000px wide). The build reads each image's
-size (for `width`/`height`) and generates WebP variants at 480/800/1200/1600px for `srcset`; the dev server
-renders the same variants on the fly. All below-the-fold images are lazy-loaded.
+```json
+"brand": { "primary": "#1F6FEB", "accent": "#F6C445", "background": "#FFF7E8" }
+```
 
-## Link previews (WhatsApp / Instagram)
+- `primary` is their main brand colour (buttons, highlights). Take it from their logo or signage. Any colour
+  picker works, including the one built into most screenshot tools.
+- `accent` is a second colour. `background` is the page colour. You can delete either line to use the mood's
+  own palette.
+- Text colours adjust automatically so everything stays readable.
 
-`npm run build` writes a real `dist/<slug>/index.html` per cafe with that cafe's
-`<title>`, description, Open Graph and Twitter tags. `og:image` needs an absolute
-URL: on Vercel the production domain is used automatically; for a custom domain
-set the env var `SITE_URL=https://demos.yourstudio.com` in the Vercel project.
+### Other options
 
-## Keeping demos out of Google
+| In `config.json` | What it does |
+|---|---|
+| `"hero3d": false` | turns off the 3D object at the top (a drawn version shows instead) |
+| `"reviews": [...]` | adds a reviews section. **Only real reviews, copied word for word**, with name and source. Never make reviews up. Leave the field out if they have none. |
+| `"headings": { "menu": { "title": "Tonight's menu" } }` | renames a section heading |
+| `"cta": { "text": "Book a table", "action": "call" }` | the main button: `whatsapp`, `call` or `maps` |
+| `"timezone": "Asia/Dubai"` | for cafes outside India, so "Open now" is correct |
 
-These are pitch demos, not the businesses' real sites:
+Every option is described in [docs/TECHNICAL.md](docs/TECHNICAL.md#config-reference).
 
-- every page has `<meta name="robots" content="noindex, nofollow, noarchive">`
-- every response has an `X-Robots-Tag: noindex, nofollow, noarchive` header (vercel.json)
-- `robots.txt` disallows all crawlers; only link-preview bots (WhatsApp, Facebook/Instagram,
-  X, Slack, LinkedIn, Telegram, Discord) may fetch pages so shared links show a preview
-- the build refuses to run if the noindex meta or robots.txt is missing
+---
+
+## Pitching
+
+- **Private index:** the home page of the site (`/`) lists every demo with a **QR code**. Show it on a call,
+  or print it for a walk-in pitch: they scan it and the demo opens on their own phone.
+- **Phone preview:** add `?preview=mobile` to a demo link on your laptop
+  (`/blue-door-cafe?preview=mobile`) to show the site inside a phone frame while screen-sharing. Press **R**
+  to replay the opening animation. On a phone the link just opens the normal site.
+- **Sharing on WhatsApp:** the link shows a preview card with their name and hero photo.
+- The opening animation plays once per visit. To see it again, open the link in a new tab.
+
+## Deploying
+
+The site is hosted on **Vercel**, connected to this GitHub repository.
+
+- **To publish:** commit your changes and push to the main branch. Vercel rebuilds automatically and the new
+  or updated demo is live in about a minute, at `https://<your-vercel-domain>/<link-name>`.
+- **To try something first:** push to any other branch. Vercel builds a separate preview link and the live
+  demos are not affected.
+- **Before pushing,** run `npm run check`. If it shows errors (✖), the build would fail, so fix them first.
+- Using your own domain? In Vercel → Project → Settings → Environment Variables, set
+  `SITE_URL=https://demos.yourdomain.com` so link previews use it.
+
+First-time setup on a new Vercel account: *Add New → Project → Import* this GitHub repository. The settings are
+read from `vercel.json`, so nothing needs changing. Then make sure *Settings → Deployment Protection* is
+**off**, otherwise clients get a Vercel login page and WhatsApp can't show link previews.
+
+## Privacy: demos stay out of Google
+
+These are pitch demos, not the businesses' real websites. Every page tells search engines not to list
+it, the site blocks crawlers, and only link-preview bots (WhatsApp, Instagram, etc.) may read it. People only
+find a demo if you send them the link.
+
+## ⚠ When a client signs
+
+Demos are often built with photos taken from the business's Instagram or Google listing. **Once a client
+signs, replace every photo with files they send you (or that you shoot)** and get written permission
+for anything you keep. Also replace any copy you wrote for them with text they approve. Run `npm run check`
+afterwards: it should show no warnings.
+
+---
+
+## Command cheat sheet
+
+| Command | What it does |
+|---|---|
+| `npm run new-cafe` | create a new cafe (asks questions) |
+| `npm run check` | check every cafe before deploying (`npm run check -- blue-door-cafe` for one) |
+| `npm run dev` | preview on your computer, updates as you edit |
+| `npm run placeholders` | draw stand-in photos for any image listed in a config that doesn't exist yet |
+| `npm run build` | build the whole site (Vercel does this for you) |
+
+Developer documentation (structure, animation, 3D, performance, tests) is in
+[docs/TECHNICAL.md](docs/TECHNICAL.md).
