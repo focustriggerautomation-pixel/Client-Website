@@ -1,5 +1,7 @@
 import { useId, useRef, useState, type KeyboardEvent } from 'react';
-import { formatPrice, SECTION_IDS, type MenuItem } from '../../lib/content.ts';
+import { gsap, useGSAP } from '../../motion/gsap.ts';
+import { useMotion } from '../../motion/MotionProvider.tsx';
+import { formatPrice, SECTION_IDS, type MenuItem, headingFor } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { ActionLink } from '../ActionLink.tsx';
 import { byMood } from '../byMood.tsx';
@@ -15,20 +17,21 @@ const usePrice = () => {
 /** An elegant typographic list: name, dotted leader, price. No photos. */
 function MenuDark() {
   const { cafe } = useCafe();
+  const h = headingFor(useCafe().cafe, 'menu', { kicker: 'Menu', title: 'The menu' });
   const price = usePrice();
   return (
     <section id={SECTION_IDS.menu} aria-labelledby="menu-title" className="section-y border-t border-line bg-bg text-ink">
       <div className="container-x">
-        <DarkHeading id="menu-title" sectionId={SECTION_IDS.menu} kicker="Menu" title="The menu" />
+        <DarkHeading id="menu-title" sectionId={SECTION_IDS.menu} kicker={h.kicker} title={h.title} />
         <div className="mt-14 grid gap-x-20 gap-y-16 sm:mt-20 lg:grid-cols-2">
           {cafe.menu.categories.map((cat) => (
             <div key={cat.name}>
-              <h3 className="flex items-baseline justify-between gap-4 border-b border-primary/40 pb-4">
+              <h3 data-anim="fade" className="flex items-baseline justify-between gap-4 border-b border-primary/40 pb-4">
                 <span className="font-display text-step-3 italic">{cat.name}</span>
                 <span className="eyebrow text-muted">{String(cat.items.length).padStart(2, '0')}</span>
               </h3>
               {cat.description && <p className="mt-4 text-step-n1 text-muted">{cat.description}</p>}
-              <ul className="mt-2">
+              <ul data-anim="stagger" className="mt-2">
                 {cat.items.map((item) => (
                   <li key={item.name} className="border-b border-line py-5 last:border-0">
                     <div className="flex items-baseline gap-3">
@@ -56,14 +59,15 @@ function MenuDark() {
 /** Card grid with item photos and sticker tags; jump-chips for categories. */
 function MenuBright() {
   const { cafe } = useCafe();
+  const h = headingFor(useCafe().cafe, 'menu', { kicker: 'Menu', title: 'What’s good today' });
   const price = usePrice();
   const slug = (s: string) => `menu-${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
   return (
     <section id={SECTION_IDS.menu} aria-labelledby="menu-title" className="section-y bg-bg text-ink">
       <div className="container-x">
-        <BrightHeading id="menu-title" kicker="Menu" title="What’s good today" />
+        <BrightHeading id="menu-title" kicker={h.kicker} title={h.title} />
         {cafe.menu.categories.length > 1 && (
-          <nav aria-label="Menu categories" className="bleed-x no-scrollbar mt-8 flex gap-2.5 overflow-x-auto pb-2">
+          <nav data-anim="fade" aria-label="Menu categories" className="bleed-x no-scrollbar mt-8 flex gap-2.5 overflow-x-auto pb-2">
             {cafe.menu.categories.map((cat) => (
               <a key={cat.name} href={`#${slug(cat.name)}`} className="shrink-0 rounded-button border-2 border-ink bg-bg px-4 py-2 text-step-n1 font-bold hover:bg-accent hover:text-on-accent">
                 {cat.name}
@@ -74,14 +78,14 @@ function MenuBright() {
 
         {cafe.menu.categories.map((cat, ci) => (
           <div key={cat.name} id={slug(cat.name)} className="mt-14 first-of-type:mt-10">
-            <h3 className="display flex items-center gap-3 text-step-3">
+            <h3 data-anim="fade" className="display flex items-center gap-3 text-step-3">
               <span aria-hidden className={`inline-block size-4 rounded-full border-2 border-ink ${ci % 2 ? 'bg-primary' : 'bg-accent'}`} />
               {cat.name}
             </h3>
             {cat.description && <p className="mt-2 text-muted">{cat.description}</p>}
-            <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+            <ul data-anim="stagger" className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
               {cat.items.map((item, i) => (
-                <li key={item.name} className="relative flex rounded-lg border-2 border-ink bg-bg shadow-[4px_4px_0_var(--c-ink)] sm:flex-col">
+                <li key={item.name} data-tilt className="relative flex rounded-lg border-2 border-ink bg-bg shadow-[4px_4px_0_var(--c-ink)] sm:flex-col">
                   <div className="w-28 shrink-0 overflow-hidden rounded-l-[calc(var(--r-lg)-2px)] border-r-2 border-ink sm:w-auto sm:rounded-none sm:rounded-t-[calc(var(--r-lg)-2px)] sm:border-b-2 sm:border-r-0">
                     {item.image ? (
                       <Img path={item.image} alt={item.name} sizes="(min-width: 1024px) 24rem, (min-width: 640px) 45vw, 7rem" className="h-full w-full object-cover sm:aspect-[4/3] sm:h-auto" />
@@ -117,12 +121,33 @@ function MenuBright() {
 /** Tabbed categories (accessible tabs with arrow keys) + prominent reserve / order buttons. */
 function MenuWarm() {
   const { cafe } = useCafe();
+  const h = headingFor(useCafe().cafe, 'menu', { kicker: 'Menu', title: 'Our menu' });
   const price = usePrice();
   const cats = cafe.menu.categories;
   const [active, setActive] = useState(0);
   const uid = useId();
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const cat = cats[active];
+  const panelList = useRef<HTMLUListElement>(null);
+  const firstRender = useRef(true);
+  const { reduced, profile } = useMotion();
+
+  // Smooth tab change: the new category's dishes ease in (the first render is handled by the scroll reveal).
+  useGSAP(
+    () => {
+      if (firstRender.current) {
+        firstRender.current = false;
+        return;
+      }
+      const items = panelList.current ? gsap.utils.toArray<HTMLElement>(panelList.current.children) : [];
+      gsap.fromTo(
+        items,
+        { opacity: 0, y: reduced ? 0 : 14 },
+        { opacity: 1, y: 0, duration: reduced ? 0.25 : 0.55, ease: reduced ? 'none' : profile.ease, stagger: reduced ? 0 : 0.045, overwrite: true },
+      );
+    },
+    { dependencies: [active], scope: panelList },
+  );
 
   const onKey = (e: KeyboardEvent) => {
     const delta = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
@@ -136,9 +161,9 @@ function MenuWarm() {
   return (
     <section id={SECTION_IDS.menu} aria-labelledby="menu-title" className="section-y bg-surface text-ink">
       <div className="container-x">
-        <WarmHeading id="menu-title" kicker="Menu" title="Our menu" />
+        <WarmHeading id="menu-title" kicker={h.kicker} title={h.title} />
 
-        <div role="tablist" aria-label="Menu categories" className="bleed-x no-scrollbar mt-10 flex gap-2 overflow-x-auto pb-1 md:justify-center" onKeyDown={onKey}>
+        <div data-anim="fade" role="tablist" aria-label="Menu categories" className="bleed-x no-scrollbar mt-10 flex gap-2 overflow-x-auto pb-1 md:justify-center" onKeyDown={onKey}>
           {cats.map((c, i) => (
             <button
               key={c.name}
@@ -163,7 +188,7 @@ function MenuWarm() {
 
         <div role="tabpanel" id={`${uid}-panel`} aria-labelledby={`${uid}-tab-${active}`} tabIndex={0} className="mt-8 rounded-lg border border-line bg-bg p-5 sm:p-10">
           {cat.description && <p className="mb-8 text-center text-muted">{cat.description}</p>}
-          <ul className="grid gap-x-14 gap-y-8 lg:grid-cols-2">
+          <ul ref={panelList} data-anim="stagger" className="grid gap-x-14 gap-y-8 lg:grid-cols-2">
             {cat.items.map((item) => (
               <li key={item.name} className="flex gap-4">
                 {item.image && <Img path={item.image} alt={item.name} sizes="6rem" className="size-14 shrink-0 rounded-full object-cover sm:size-24" />}
@@ -184,7 +209,7 @@ function MenuWarm() {
           </ul>
         </div>
 
-        <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+        <div data-anim="stagger" className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
           <ActionLink action="call" className="inline-flex rounded-button bg-primary px-7 py-4 font-semibold text-on-primary hover:brightness-110" />
           <ActionLink action="whatsapp" className="inline-flex rounded-button border-2 border-primary px-7 py-[0.875rem] font-semibold text-primary hover:bg-primary hover:text-on-primary" />
         </div>

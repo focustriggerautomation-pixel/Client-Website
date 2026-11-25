@@ -14,6 +14,8 @@ import { Visit } from '../components/visit/Visit.tsx';
 import { ContactBand } from '../components/contact/ContactBand.tsx';
 import { Footer } from '../components/footer/Footer.tsx';
 import { FloatingWhatsApp } from '../components/FloatingWhatsApp.tsx';
+import { MotionLayer } from '../motion/MotionLayer.tsx';
+import { MotionProvider } from '../motion/MotionProvider.tsx';
 import { ConfigErrorPage } from './ConfigErrorPage.tsx';
 
 type State = { status: 'loading' } | { status: 'ready'; data: LoadedCafe } | { status: 'error'; error: unknown };
@@ -60,6 +62,8 @@ export function CafePage({ slug }: { slug: string }) {
 
   return (
     <CafeThemeProvider cafe={data.config} theme={theme} images={data.images}>
+      <MotionProvider>
+      <MotionLayer>
       <a href="#main" className="sr-only z-50 rounded-md bg-ink px-4 py-2 text-bg focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
         Skip to content
       </a>
@@ -76,6 +80,8 @@ export function CafePage({ slug }: { slug: string }) {
       </main>
       <Footer />
       <FloatingWhatsApp />
+      </MotionLayer>
+      </MotionProvider>
     </CafeThemeProvider>
   );
 }

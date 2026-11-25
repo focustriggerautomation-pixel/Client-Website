@@ -12,6 +12,7 @@ export function CtaButton({ className = '', label }: { className?: string; label
   return (
     <a
       href={ctaHref(cafe)}
+      data-magnetic
       {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       className={`items-center justify-center gap-3 whitespace-nowrap transition-[transform,box-shadow,background-color,color] duration-200 ${className}`}
     >

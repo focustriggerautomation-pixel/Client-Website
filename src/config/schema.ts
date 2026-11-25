@@ -49,6 +49,23 @@ const dayHours = z.union([z.literal('closed'), interval, z.array(interval).min(1
 });
 export type DayHours = z.infer<typeof dayHours>;
 
+export const isValidTimeZone = (tz: string) => {
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/** Override a section's small kicker line and/or its title. Omitted parts use the mood's default copy. */
+const heading = z.strictObject({
+  kicker: z.string().trim().min(1, 'heading kicker must not be empty').optional(),
+  title: z.string().trim().min(1, 'heading title must not be empty').optional(),
+});
+export const HEADING_SECTIONS = ['about', 'menu', 'signatures', 'gallery', 'reviews', 'visit', 'contact'] as const;
+export type HeadingSection = (typeof HEADING_SECTIONS)[number];
+
 const googleFont = z.strictObject({
   /** Google Fonts family name exactly as on fonts.google.com, e.g. "Playfair Display". */
   family: nonEmpty('fonts.*.family'),
@@ -161,6 +178,24 @@ export const cafeConfigSchema = z.strictObject({
 
   /** Only real reviews, copied verbatim with author and source. Omit entirely if you have none. */
   reviews: z.array(review).min(1, 'omit "reviews" entirely instead of leaving it empty').optional(),
+
+  /**
+   * IANA time zone of the cafe, e.g. "Asia/Kolkata", "Asia/Dubai", "Europe/London".
+   * "Open now" and today's row in the hours table are computed in this zone. Default "Asia/Kolkata".
+   */
+  timezone: z
+    .string()
+    .trim()
+    .refine(isValidTimeZone, { message: 'timezone must be an IANA time zone name like "Asia/Kolkata" or "Europe/London"' })
+    .default('Asia/Kolkata'),
+
+  /**
+   * Optional per-section heading overrides: { "menu": { "kicker": "Carta", "title": "Tonight's menu" } }.
+   * about.title defaults to about.title; contact.title defaults to cta.headline.
+   */
+  headings: z
+    .strictObject(Object.fromEntries(HEADING_SECTIONS.map((k) => [k, heading.optional()])) as Record<HeadingSection, z.ZodOptional<typeof heading>>)
+    .optional(),
 
   hours: z.strictObject(
     Object.fromEntries(DAYS.map((d) => [d, dayHours])) as Record<Day, typeof dayHours>,

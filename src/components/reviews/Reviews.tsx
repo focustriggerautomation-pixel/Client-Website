@@ -1,4 +1,4 @@
-import { SECTION_IDS } from '../../lib/content.ts';
+import { SECTION_IDS, headingFor } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { byMood } from '../byMood.tsx';
 import { QuoteIcon } from '../icons.tsx';
@@ -8,20 +8,21 @@ import { BrightHeading, DarkHeading, WarmHeading } from '../kit.tsx';
 
 function ReviewsDark() {
   const { cafe } = useCafe();
+  const h = headingFor(useCafe().cafe, 'reviews', { kicker: 'Reviews', title: 'Kind words' });
   if (!cafe.reviews) return null;
   const [lead, ...rest] = cafe.reviews;
   return (
     <section id={SECTION_IDS.reviews} aria-labelledby="reviews-title" className="section-y border-t border-line bg-bg text-ink">
       <div className="container-x">
-        <DarkHeading id="reviews-title" sectionId={SECTION_IDS.reviews} kicker="Reviews" title="Kind words" />
-        <figure className="mt-14 max-w-5xl sm:mt-20">
+        <DarkHeading id="reviews-title" sectionId={SECTION_IDS.reviews} kicker={h.kicker} title={h.title} />
+        <figure data-anim="fade" className="mt-14 max-w-5xl sm:mt-20">
           <blockquote className="display text-step-4 leading-[1.15]">“{lead.text}”</blockquote>
           <figcaption className="eyebrow mt-8 text-muted">
             <span className="text-primary">{lead.author}</span> · {lead.source}
           </figcaption>
         </figure>
         {rest.length > 0 && (
-          <div className="mt-16 grid gap-12 border-t border-line pt-12 md:grid-cols-2 lg:grid-cols-3">
+          <div data-anim="stagger" className="mt-16 grid gap-12 border-t border-line pt-12 md:grid-cols-2 lg:grid-cols-3">
             {rest.map((r, i) => (
               <figure key={i}>
                 <blockquote className="font-display text-step-1 italic leading-snug">“{r.text}”</blockquote>
@@ -39,13 +40,14 @@ function ReviewsDark() {
 
 function ReviewsBright() {
   const { cafe } = useCafe();
+  const h = headingFor(useCafe().cafe, 'reviews', { kicker: 'Reviews', title: 'People say nice things' });
   if (!cafe.reviews) return null;
   const tones = ['bg-accent/40', 'bg-primary/15', 'bg-surface'];
   return (
     <section id={SECTION_IDS.reviews} aria-labelledby="reviews-title" className="section-y bg-bg text-ink">
       <div className="container-x">
-        <BrightHeading id="reviews-title" kicker="Reviews" title="People say nice things" />
-        <ul className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3 md:max-lg:[&>li:last-child:nth-child(odd)]:col-span-2">
+        <BrightHeading id="reviews-title" kicker={h.kicker} title={h.title} />
+        <ul data-anim="stagger" className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3 md:max-lg:[&>li:last-child:nth-child(odd)]:col-span-2">
           {cafe.reviews.map((r, i) => (
             <li key={i}>
               <figure>
@@ -73,12 +75,13 @@ function ReviewsBright() {
 
 function ReviewsWarm() {
   const { cafe } = useCafe();
+  const h = headingFor(useCafe().cafe, 'reviews', { kicker: 'Reviews', title: 'What our guests say' });
   if (!cafe.reviews) return null;
   return (
     <section id={SECTION_IDS.reviews} aria-labelledby="reviews-title" className="paper section-y bg-bg text-ink">
       <div className="container-x">
-        <WarmHeading id="reviews-title" kicker="Reviews" title="What our guests say" />
-        <ul className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3 md:max-lg:[&>li:last-child:nth-child(odd)]:col-span-2">
+        <WarmHeading id="reviews-title" kicker={h.kicker} title={h.title} />
+        <ul data-anim="stagger" className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3 md:max-lg:[&>li:last-child:nth-child(odd)]:col-span-2">
           {cafe.reviews.map((r, i) => (
             <li key={i} className="rounded-lg border border-line bg-surface p-7 text-center sm:p-9">
               <figure className="flex h-full flex-col items-center">

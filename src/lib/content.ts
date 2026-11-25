@@ -1,12 +1,13 @@
-import type { CafeConfig, Mood } from '../config/schema.ts';
+import type { CafeConfig, HeadingSection, Mood } from '../config/schema.ts';
 import { mapsHref, telHref, whatsappHref } from './cta.ts';
 
 export type MenuItem = CafeConfig['menu']['categories'][number]['items'][number];
 export type MenuCategory = CafeConfig['menu']['categories'][number];
 export type Action = 'whatsapp' | 'call' | 'maps';
 
+const INR = new Intl.NumberFormat('en-IN');
 export function formatPrice(price: MenuItem['price'], currency: string): string {
-  return typeof price === 'number' ? `${currency}${price.toLocaleString('en-IN')}` : price;
+  return typeof price === 'number' ? `${currency}${INR.format(price)}` : price;
 }
 
 const SIGNATURE_TAG = /^(?:bestseller|best seller|best-seller|signature|chef'?s special|house special)$/i;
@@ -84,3 +85,9 @@ export const instagramUrl = (handle: string) => `https://www.instagram.com/${han
 
 /** The CTA action first, then the other two. */
 export const actionsInOrder = (c: CafeConfig): Action[] => [c.cta.action, ...(['whatsapp', 'call', 'maps'] as const).filter((a) => a !== c.cta.action)];
+
+/** A section's kicker + title: config `headings` override, else the mood's default copy. */
+export function headingFor(c: CafeConfig, section: HeadingSection, defaults: { kicker: string; title: string }): { kicker: string; title: string } {
+  const o = c.headings?.[section];
+  return { kicker: o?.kicker ?? defaults.kicker, title: o?.title ?? defaults.title };
+}

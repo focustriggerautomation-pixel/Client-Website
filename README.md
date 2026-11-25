@@ -38,11 +38,14 @@ src/
                             visit (hours + map), contact (CTA band), footer
   components/header/     ← sticky header + mobile menu (shared, mood-styled)
   lib/                   ← shared data logic: hours / open-now, prices, signature items
+  motion/                ← animation layer: MotionProvider (Lenis, reduced motion, intro),
+                            MotionLayer (reveals, parallax, tilt, magnets, header), GalleryStage, Lightbox
   pages/                 ← cafe page, private index, 404, config-error page
 scripts/
   validate.ts            ← `npm run validate`
   postbuild.ts           ← per-slug index.html with title / OG / Twitter tags
   new-cafe.ts            ← `npm run new-cafe -- <slug>`
+tests/                   ← `npm test` (open-now cases) + browser QA scripts
   make-placeholders.mjs  ← `npm run placeholders` (gradient stand-in images)
 public/robots.txt        ← disallow all
 vercel.json
@@ -62,12 +65,40 @@ in `cafes/` for complete examples. Notes:
 - **reviews**: optional. Only real reviews, copied verbatim with author and source. Never invent reviews. Omit the field if there are none.
 - **hours**: all seven days (`mon`…`sun`), each `{ "open": "08:00", "close": "22:00" }`, a list of those for
   split days (lunch + dinner), or `"closed"`. `"23:59"` reads as midnight; a close time earlier than the open time
-  runs past midnight. "Open now / Closed" is computed in the visitor's local time.
+  runs past midnight.
+- **timezone** (optional, default `"Asia/Kolkata"`): IANA name like `"Asia/Dubai"` or `"Europe/London"`.
+  "Open now / Closed" and today's highlighted row use the cafe's zone, not the visitor's.
+- **headings** (optional): override any section's kicker and/or title, e.g.
+  `"headings": { "menu": { "kicker": "Carta", "title": "Tonight’s menu" } }`. Sections: `about`, `menu`,
+  `signatures`, `gallery`, `reviews`, `visit`, `contact`. Anything omitted keeps the mood's default copy
+  (`about.title` and `cta.headline` remain the defaults for those two).
 - **contact.mapsEmbedUrl**: Google Maps → Share → Embed a map → copy the iframe `src`.
 - **cta.action**: `whatsapp` (uses `contact.whatsapp` + optional `cta.message`), `call`, or `maps`.
   Optional `cta.headline` sets the contact band's headline; `cta.labels.{call,whatsapp,maps}` rename the
   secondary buttons (defaults depend on the mood, e.g. warm-restaurant says "Call to reserve" / "Order on WhatsApp").
 - **hero image** doubles as the link-preview image: use JPG/PNG under ~600 KB (WhatsApp skips bigger images and can't show SVG).
+
+## Motion
+
+GSAP + ScrollTrigger + Lenis, in `src/motion/`. Sections stay plain markup and opt in with `data-*` attributes
+(documented at the top of `src/motion/MotionLayer.tsx`). Each mood's motion profile lives with its tokens in
+`src/theme/moods.ts` (`motion.gsap`): dark-premium is slow and cinematic (3D fly-through gallery, heavy scroll),
+bright-cafe bouncy (overshoot eases, springy magnets, tilting strip), warm-restaurant soft and calm. `?mood=`
+swaps motion too.
+
+- Hidden start states are set by JS only — no CSS hides content, and if the motion layer throws it reverts itself.
+- `prefers-reduced-motion`: no intro, parallax, pinning, tilt, magnets or smooth scroll; simple fades only.
+- Debug: `?motion=reduced` forces reduced motion, `?motion=off` disables the motion layer (static page).
+- Performance notes (measured on an emulated phone at 4× CPU throttle): scroll reveals run as compositor CSS
+  transitions triggered by an IntersectionObserver; Lenis is used for mouse/trackpad only (phones keep native
+  momentum scrolling); headings are split in idle time, never inside a scroll event.
+
+## QA scripts
+
+`npm test` (open-now logic) needs nothing extra. The browser checks in `tests/browser/` need Playwright
+(`npm i -D playwright && npx playwright install chromium`) and a running `npm run preview`:
+`layout.cjs` (overflow, images, every section visible after scrolling), `interaction.cjs`, `reduced-motion.cjs`,
+`contrast.cjs`, and `perf.cjs <slug> mobile` (frame timing under 4× CPU throttle).
 
 ## Images
 

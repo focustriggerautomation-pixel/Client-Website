@@ -3,7 +3,9 @@ import { isRaster, variantPath, variantWidths } from '../config/images.ts';
 import { imageUrl } from '../config/registry.ts';
 import { useCafe } from '../theme/ThemeProvider.tsx';
 
-interface ImgProps {
+type DataAttrs = { [k: `data-${string}`]: string | boolean | undefined };
+
+interface ImgProps extends DataAttrs {
   /** Config path, e.g. "images/hero.jpg". */
   path: string;
   alt: string;
@@ -16,7 +18,7 @@ interface ImgProps {
 }
 
 /** <img> with intrinsic width/height, WebP srcset, and lazy loading by default. */
-export function Img({ path, alt, sizes, className, style, priority }: ImgProps) {
+export function Img({ path, alt, sizes, className, style, priority, ...data }: ImgProps) {
   const { cafe, images } = useCafe();
   const meta = images[path];
   const src = imageUrl(cafe.slug, path);
@@ -37,6 +39,7 @@ export function Img({ path, alt, sizes, className, style, priority }: ImgProps) 
       fetchPriority={priority ? 'high' : undefined}
       className={className}
       style={style}
+      {...data}
     />
   );
 }

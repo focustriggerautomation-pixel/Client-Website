@@ -10,12 +10,12 @@ export function DarkHeading({ id, sectionId, kicker, title, className = '' }: { 
   const { cafe } = useCafe();
   return (
     <div className={className}>
-      <p className="eyebrow flex items-center gap-4 text-primary">
+      <p data-anim="kicker" className="eyebrow flex items-center gap-4 text-primary">
         <span className="font-display text-step-1 normal-case italic tracking-normal">{sectionNumber(cafe, sectionId)}</span>
         <span aria-hidden className="h-px w-10 bg-primary/60" />
         {kicker}
       </p>
-      <h2 id={id} className="display mt-6 text-step-5">
+      <h2 id={id} data-anim="title" className="display mt-6 text-step-5">
         {title}
       </h2>
     </div>
@@ -27,11 +27,12 @@ export function BrightHeading({ id, kicker, title, className = '', tone = 'accen
   return (
     <div className={className}>
       <span
+        data-anim="kicker"
         className={`inline-block -rotate-2 rounded-button border-2 border-ink px-3.5 py-1 text-step-n1 font-bold shadow-[2px_2px_0_var(--c-ink)] ${tone === 'accent' ? 'bg-accent text-on-accent' : 'bg-primary text-on-primary'}`}
       >
         {kicker}
       </span>
-      <h2 id={id} className="display mt-5 text-step-5">
+      <h2 id={id} data-anim="title" className="display mt-5 text-step-5">
         {title}
       </h2>
     </div>
@@ -42,11 +43,11 @@ export function BrightHeading({ id, kicker, title, className = '', tone = 'accen
 export function WarmHeading({ id, kicker, title, className = '' }: { id: string; kicker: string; title: ReactNode; className?: string }) {
   return (
     <div className={`flex flex-col items-center text-center ${className}`}>
-      <p className="eyebrow text-primary">{kicker}</p>
-      <h2 id={id} className="display mt-4 text-step-5">
+      <p data-anim="kicker" className="eyebrow text-primary">{kicker}</p>
+      <h2 id={id} data-anim="title" className="display mt-4 text-step-5">
         {title}
       </h2>
-      <Ornament className="mt-6" />
+      <Ornament className="mt-6" data-anim="fade" />
     </div>
   );
 }

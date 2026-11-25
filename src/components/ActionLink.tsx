@@ -12,6 +12,7 @@ export function ActionLink({ action, className = '', label, icon = true }: { act
   return (
     <a
       href={actionHref(cafe, action)}
+      data-magnetic
       {...(action !== 'call' ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       className={`items-center justify-center gap-2.5 whitespace-nowrap transition-[transform,box-shadow,background-color,color,border-color,filter] duration-200 ${className}`}
     >

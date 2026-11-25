@@ -5,6 +5,36 @@ import type { FontSpec } from './fonts.ts';
  * A mood is a complete design-token set. A cafe picks one mood; its brand
  * colours then override the mood's palette (see buildTheme.ts).
  */
+export interface MotionProfile {
+  /** Section reveal duration (s). */
+  reveal: number;
+  /** Ease for blocks / images. */
+  ease: string;
+  /** Ease for split text. */
+  textEase: string;
+  /** Stagger between siblings (s). */
+  stagger: number;
+  /** How headlines split: masked lines sliding up, or individual words popping in. */
+  split: 'lines' | 'words';
+  /** Parallax depth multiplier (px of travel per unit of data-parallax speed). */
+  parallax: number;
+  /** Hero photo starts this zoomed in and settles to 1. */
+  heroScale: number;
+  /** Max 3D tilt on hover (deg) and on touch scroll (deg). */
+  tilt: number;
+  touchTilt: number;
+  /** Magnetic pull (0–1) and the ease it springs back with. */
+  magnet: number;
+  magnetReturn: string;
+  /** Lenis smoothing: lower = heavier, more cinematic. */
+  lerp: number;
+  intro: 'curtain' | 'pop' | 'fade';
+  /** Gallery sequence: a 3D fly-through or a horizontal strip in perspective. */
+  gallery: 'fly' | 'strip';
+  /** Strip: max card rotateY (deg) as cards pass the centre. */
+  galleryTurn: number;
+}
+
 export interface MoodTokens {
   label: string;
   palette: {
@@ -44,12 +74,15 @@ export interface MoodTokens {
   };
   radius: { sm: string; md: string; lg: string; button: string; image: string };
   motion: {
-    /** 0 = static, 1 = lively. Later phases scale animation distance/stagger by this. */
+    /** 0 = static, 1 = lively. */
     intensity: number;
+    /** CSS transition duration (ms) for hover states etc. */
     duration: number;
     easing: string;
     /** Reveal distance in px at intensity 1. */
     distance: number;
+    /** GSAP / Lenis profile — the animation layer reads only this. */
+    gsap: MotionProfile;
   };
   /** Decorative extras the hero/sections may use. */
   texture: 'grain' | 'none' | 'paper';
@@ -78,7 +111,14 @@ export const MOOD_TOKENS: Record<Mood, MoodTokens> = {
     },
     space: { density: 1.2, section: 'clamp(5rem, 12vw, 10rem)', container: '78rem' },
     radius: { sm: '0px', md: '2px', lg: '4px', button: '0px', image: '2px' },
-    motion: { intensity: 0.45, duration: 900, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', distance: 24 },
+    motion: {
+      intensity: 0.45,
+      duration: 900,
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      distance: 24,
+      // Slow and cinematic: long expo eases, masked lines, deep parallax, heavy scroll, a 3D fly-through.
+      gsap: { reveal: 1.4, ease: 'expo.out', textEase: 'power4.out', stagger: 0.12, split: 'lines', parallax: 70, heroScale: 1.18, tilt: 5, touchTilt: 3, magnet: 0.22, magnetReturn: 'power3.out', lerp: 0.075, intro: 'curtain', gallery: 'fly', galleryTurn: 0 },
+    },
     texture: 'grain',
   },
 
@@ -104,7 +144,14 @@ export const MOOD_TOKENS: Record<Mood, MoodTokens> = {
     },
     space: { density: 1, section: 'clamp(3rem, 6.5vw, 5.5rem)', container: '76rem' },
     radius: { sm: '10px', md: '18px', lg: '32px', button: '999px', image: '28px' },
-    motion: { intensity: 1, duration: 600, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', distance: 36 },
+    motion: {
+      intensity: 1,
+      duration: 600,
+      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      distance: 36,
+      // Bouncy and playful: overshooting eases, words that pop, springy magnets, a tilting strip.
+      gsap: { reveal: 0.85, ease: 'back.out(1.6)', textEase: 'back.out(1.8)', stagger: 0.05, split: 'words', parallax: 45, heroScale: 1, tilt: 12, touchTilt: 7, magnet: 0.4, magnetReturn: 'elastic.out(1, 0.35)', lerp: 0.12, intro: 'pop', gallery: 'strip', galleryTurn: 28 },
+    },
     texture: 'none',
   },
 
@@ -130,7 +177,14 @@ export const MOOD_TOKENS: Record<Mood, MoodTokens> = {
     },
     space: { density: 1.1, section: 'clamp(4.5rem, 10vw, 8.5rem)', container: '72rem' },
     radius: { sm: '6px', md: '10px', lg: '16px', button: '8px', image: '14px' },
-    motion: { intensity: 0.65, duration: 750, easing: 'cubic-bezier(0.25, 0.8, 0.25, 1)', distance: 28 },
+    motion: {
+      intensity: 0.65,
+      duration: 750,
+      easing: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
+      distance: 28,
+      // Soft and calm: gentle power eases, soft line fades, light parallax, a slow strip.
+      gsap: { reveal: 1.05, ease: 'power2.out', textEase: 'power3.out', stagger: 0.08, split: 'lines', parallax: 35, heroScale: 1.06, tilt: 5, touchTilt: 3, magnet: 0.18, magnetReturn: 'power2.out', lerp: 0.09, intro: 'fade', gallery: 'strip', galleryTurn: 14 },
+    },
     texture: 'paper',
   },
 };

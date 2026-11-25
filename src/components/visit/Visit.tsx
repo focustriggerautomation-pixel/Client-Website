@@ -1,4 +1,4 @@
-import { SECTION_IDS } from '../../lib/content.ts';
+import { SECTION_IDS, headingFor } from '../../lib/content.ts';
 import { formatTime, openStatus, weekRows, type WeekRow } from '../../lib/hours.ts';
 import { useNow } from '../../lib/useNow.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
@@ -11,7 +11,7 @@ import { MapEmbed } from '../MapEmbed.tsx';
 function useHours() {
   const { cafe } = useCafe();
   const now = useNow();
-  return { rows: weekRows(cafe.hours, now), status: openStatus(cafe.hours, now) };
+  return { rows: weekRows(cafe.hours, now, cafe.timezone), status: openStatus(cafe.hours, now, cafe.timezone) };
 }
 
 /** Each interval on its own line, e.g. lunch and dinner. */
@@ -32,20 +32,21 @@ const StatusDot = ({ open }: { open: boolean }) => <span aria-hidden className={
 
 function VisitDark() {
   const { cafe } = useCafe();
+  const h = headingFor(useCafe().cafe, 'visit', { kicker: 'Visit', title: 'Find us' });
   const { rows, status } = useHours();
   return (
     <section id={SECTION_IDS.visit} aria-labelledby="visit-title" className="section-y border-t border-line bg-bg text-ink">
       <div className="container-x grid gap-14 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-5">
-          <DarkHeading id="visit-title" sectionId={SECTION_IDS.visit} kicker="Visit" title="Find us" />
-          <address className="mt-8 font-display text-step-2 not-italic leading-snug">{cafe.contact.address}</address>
+          <DarkHeading id="visit-title" sectionId={SECTION_IDS.visit} kicker={h.kicker} title={h.title} />
+          <address data-anim="fade" className="mt-8 font-display text-step-2 not-italic leading-snug">{cafe.contact.address}</address>
 
           <p className="eyebrow mt-10 flex items-center gap-3">
             <StatusDot open={status.open} />
             <span>{status.headline}</span>
             {status.detail && <span className="text-muted">· {status.detail}</span>}
           </p>
-          <dl className="mt-6 border-t border-line">
+          <dl data-anim="stagger" className="mt-6 border-t border-line">
             {rows.map((r) => (
               <div
                 key={r.day}
@@ -60,12 +61,12 @@ function VisitDark() {
               </div>
             ))}
           </dl>
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div data-anim="stagger" className="mt-10 flex flex-wrap gap-4">
             <ActionLink action="maps" className="eyebrow inline-flex rounded-button border border-primary bg-primary px-6 py-4 text-on-primary hover:bg-transparent hover:text-primary" />
             <ActionLink action="call" className="eyebrow inline-flex rounded-button border border-line px-6 py-4 hover:border-primary hover:text-primary" />
           </div>
         </div>
-        <div className="min-h-80 overflow-hidden rounded-image border border-line lg:col-span-7 lg:min-h-0">
+        <div data-anim="fade" className="min-h-80 overflow-hidden rounded-image border border-line lg:col-span-7 lg:min-h-0">
           <MapEmbed tone="dark" className="min-h-80" />
         </div>
       </div>
@@ -75,12 +76,13 @@ function VisitDark() {
 
 function VisitBright() {
   const { cafe } = useCafe();
+  const h = headingFor(useCafe().cafe, 'visit', { kicker: 'Visit', title: 'Come say hi' });
   const { rows, status } = useHours();
   return (
     <section id={SECTION_IDS.visit} aria-labelledby="visit-title" className="section-y bg-bg text-ink">
       <div className="container-x">
-        <BrightHeading id="visit-title" kicker="Visit" title="Come say hi" />
-        <div className="mt-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <BrightHeading id="visit-title" kicker={h.kicker} title={h.title} />
+        <div data-anim="stagger" className="mt-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-lg border-2 border-ink bg-bg p-5 shadow-[5px_5px_0_var(--c-ink)] sm:p-7">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="display text-step-2">Opening hours</h3>
@@ -126,12 +128,13 @@ function VisitBright() {
 
 function VisitWarm() {
   const { cafe } = useCafe();
+  const h = headingFor(useCafe().cafe, 'visit', { kicker: 'Visit', title: 'Come dine with us' });
   const { rows, status } = useHours();
   return (
     <section id={SECTION_IDS.visit} aria-labelledby="visit-title" className="section-y bg-bg text-ink">
       <div className="container-x">
-        <WarmHeading id="visit-title" kicker="Visit" title="Come dine with us" />
-        <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:gap-12">
+        <WarmHeading id="visit-title" kicker={h.kicker} title={h.title} />
+        <div data-anim="stagger" className="mt-12 grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:gap-12">
           <div className="rounded-lg border border-line bg-surface p-6 sm:p-9">
             <h3 className="display text-step-2">Opening hours</h3>
             <p className="mt-3 flex items-center gap-2 text-step-n1">

@@ -26,7 +26,7 @@ function FooterDark() {
   const { cafe, year, links } = useFooter();
   return (
     <footer className="border-t border-line bg-bg pb-24 pt-16 text-ink md:pb-12">
-      <div className="container-x grid gap-12 md:grid-cols-12">
+      <div data-anim="stagger" className="container-x grid gap-12 md:grid-cols-12">
         <div className="md:col-span-5">
           <Logo />
           <p className="mt-4 max-w-[30ch] text-muted">{cafe.tagline}</p>
@@ -36,7 +36,7 @@ function FooterDark() {
           <ul className="mt-5 space-y-3">
             {navItems(cafe).map((n) => (
               <li key={n.id}>
-                <a href={`#${n.id}`} className="text-muted hover:text-ink">
+                <a href={`#${n.id}`} className="link-line text-muted hover:text-ink">
                   {n.label}
                 </a>
               </li>
@@ -72,7 +72,7 @@ function FooterBright() {
   return (
     <footer className="rounded-t-[2.5rem] border-t-2 border-ink bg-ink pb-24 pt-14 text-bg md:pb-10">
       <div className="container-x">
-        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+        <div data-anim="stagger" className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="display text-step-5">{cafe.name}</p>
             <p className="mt-2 opacity-75">{cafe.tagline}</p>
@@ -111,7 +111,7 @@ function FooterWarm() {
         {/* Text, not the logo image: a dark logo would vanish on this dark footer. */}
         <p className="display text-step-4 italic">{cafe.name}</p>
         <p className="mt-4 max-w-[36ch] opacity-75">{cafe.tagline}</p>
-        <ul className="mt-10 grid w-full max-w-3xl gap-4 sm:grid-cols-2">
+        <ul data-anim="stagger" className="mt-10 grid w-full max-w-3xl gap-4 sm:grid-cols-2">
           {links.map(({ key, href, label, Icon, external }) => (
             <li key={key}>
               <a href={href} {...ext(external)} className="flex h-full items-center justify-center gap-3 rounded-lg border border-bg/20 px-4 py-4 hover:border-bg/60">

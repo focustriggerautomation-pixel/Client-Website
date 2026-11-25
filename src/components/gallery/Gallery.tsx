@@ -1,8 +1,16 @@
-import { SECTION_IDS } from '../../lib/content.ts';
+import { SECTION_IDS, headingFor } from '../../lib/content.ts';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { byMood } from '../byMood.tsx';
+import { GalleryStage } from '../../motion/GalleryStage.tsx';
 import { Img } from '../Img.tsx';
 import { BrightHeading, DarkHeading, WarmHeading } from '../kit.tsx';
+
+/** Each photo is a real button (keyboard + screen reader) that opens the lightbox. */
+const Open = ({ i, n, children, className = '' }: { i: number; n: number; children: React.ReactNode; className?: string }) => (
+  <button type="button" data-gallery-index={i} aria-label={`Open photo ${i + 1} of ${n}`} className={`block w-full cursor-zoom-in ${className}`}>
+    {children}
+  </button>
+);
 
 const useGallery = () => {
   const { cafe } = useCafe();
@@ -25,17 +33,22 @@ const DARK_SIZES = ['(min-width: 640px) 66vw, 100vw', '(min-width: 640px) 33vw, 
 
 function GalleryDark() {
   const imgs = useGallery();
+  const h = headingFor(useCafe().cafe, 'gallery', { kicker: 'Gallery', title: 'After hours' });
   return (
     <section id={SECTION_IDS.gallery} aria-labelledby="gallery-title" className="section-y border-t border-line bg-bg text-ink">
       <div className="container-x">
-        <DarkHeading id="gallery-title" sectionId={SECTION_IDS.gallery} kicker="Gallery" title="After hours" />
+        <DarkHeading id="gallery-title" sectionId={SECTION_IDS.gallery} kicker={h.kicker} title={h.title} />
+        <GalleryStage images={imgs}>
         <ul className="mt-14 grid grid-flow-dense auto-rows-[44vw] grid-cols-2 gap-3 sm:mt-20 sm:auto-rows-[clamp(9rem,17vw,15rem)] sm:grid-cols-6 sm:gap-4">
           {imgs.map(({ path, alt }, i) => (
             <li key={path} className={DARK_SPANS[i % 6]}>
-              <Img path={path} alt={alt} sizes={DARK_SIZES[i % 6]} className="h-full w-full rounded-image object-cover saturate-[0.85]" />
+              <Open i={i} n={imgs.length} className="h-full">
+                <Img path={path} alt={alt} sizes={DARK_SIZES[i % 6]} className="h-full w-full rounded-image object-cover saturate-[0.85]" />
+              </Open>
             </li>
           ))}
         </ul>
+        </GalleryStage>
       </div>
     </section>
   );
@@ -44,24 +57,29 @@ function GalleryDark() {
 /** Masonry of tilted, bordered snapshots. */
 function GalleryBright() {
   const imgs = useGallery();
+  const h = headingFor(useCafe().cafe, 'gallery', { kicker: 'Gallery', title: 'Snapshots' });
   const aspect = ['aspect-[4/5]', 'aspect-square', 'aspect-[4/3]', 'aspect-[3/4]', 'aspect-[5/4]', 'aspect-square'];
   const tilt = ['-rotate-1', 'rotate-1', 'rotate-0', 'rotate-1', '-rotate-1', 'rotate-0'];
   return (
     <section id={SECTION_IDS.gallery} aria-labelledby="gallery-title" className="section-y bg-bg text-ink">
       <div className="container-x">
-        <BrightHeading id="gallery-title" kicker="Gallery" title="Snapshots" />
+        <BrightHeading id="gallery-title" kicker={h.kicker} title={h.title} />
+        <GalleryStage images={imgs}>
         <ul className="mt-10 columns-2 gap-4 sm:gap-6 lg:columns-3">
           {imgs.map(({ path, alt }, i) => (
             <li key={path} className="mb-4 break-inside-avoid sm:mb-6">
+              <Open i={i} n={imgs.length}>
               <Img
                 path={path}
                 alt={alt}
                 sizes="(min-width: 1024px) 24rem, 50vw"
                 className={`w-full rounded-md border-2 border-ink object-cover shadow-[4px_4px_0_var(--c-ink)] ${aspect[i % 6]} ${tilt[i % 6]}`}
               />
+              </Open>
             </li>
           ))}
         </ul>
+        </GalleryStage>
       </div>
     </section>
   );
@@ -89,25 +107,30 @@ function warmTile(i: number, n: number): { li: string; img: string } {
 /** Calm, even grid with a large lead photo. */
 function GalleryWarm() {
   const imgs = useGallery();
+  const h = headingFor(useCafe().cafe, 'gallery', { kicker: 'Gallery', title: 'A look inside' });
   return (
     <section id={SECTION_IDS.gallery} aria-labelledby="gallery-title" className="section-y bg-surface text-ink">
       <div className="container-x">
-        <WarmHeading id="gallery-title" kicker="Gallery" title="A look inside" />
+        <WarmHeading id="gallery-title" kicker={h.kicker} title={h.title} />
+        <GalleryStage images={imgs}>
         <ul className="mt-12 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-4">
           {imgs.map(({ path, alt }, i) => {
             const t = warmTile(i, imgs.length);
             return (
               <li key={path} className={t.li}>
+                <Open i={i} n={imgs.length} className="h-full">
                 <Img
                   path={path}
                   alt={alt}
                   sizes={i === 0 ? '(min-width: 768px) 50vw, 100vw' : '(min-width: 768px) 25vw, 50vw'}
                   className={`h-full w-full rounded-image object-cover ${t.img}`}
                 />
+                </Open>
               </li>
             );
           })}
         </ul>
+        </GalleryStage>
       </div>
     </section>
   );

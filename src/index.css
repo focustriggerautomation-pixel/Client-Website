@@ -183,3 +183,110 @@
     display: none;
   }
 }
+
+/* Animated underline for text links (hover / keyboard focus). Transform-only. */
+@utility link-line {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.2em;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--motion-duration) var(--motion-ease);
+  }
+  &:hover::after,
+  &:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      transition: none;
+    }
+  }
+}
+
+/*
+ * Gallery sequence layouts. Only active when the motion layer sets [data-stage] (JS on, motion allowed);
+ * otherwise the static grid stays. Unlayered on purpose so it wins over Tailwind's layered utilities.
+ */
+#gallery {
+  overflow-x: clip;
+}
+[data-stage] {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+[data-stage] > ul {
+  margin: 0;
+}
+[data-stage] > ul > li {
+  margin: 0;
+}
+[data-stage] > ul > li button,
+[data-stage] > ul > li img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+}
+
+[data-stage='strip'] {
+  overflow: hidden;
+  padding-block: 1.5rem 2rem;
+}
+[data-stage='strip'] > ul {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: clamp(1rem, 3vw, 2.25rem);
+  width: max-content;
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
+}
+[data-stage='strip'] > ul > li {
+  flex: none;
+  width: min(64vw, 26rem, 52svh);
+}
+
+[data-stage='fly'] {
+  height: 100svh;
+  overflow: hidden;
+  perspective: 900px;
+}
+[data-stage='fly'] > ul {
+  position: relative;
+  display: block;
+  height: 100%;
+  transform-style: preserve-3d;
+  /* The list is itself a plane flying toward the camera, in front of every photo in 3D order:
+     without this it swallows every tap. Only the photos take pointer events. */
+  pointer-events: none;
+}
+[data-stage='fly'] > ul > li {
+  pointer-events: auto;
+}
+[data-stage='fly'] > ul > li {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(58vw, 28rem, 46svh);
+}
+
+/*
+ * Touch devices (phones): a blurred fixed header and a blend-mode grain layer over moving parallax layers are
+ * classic mid-range-Android GPU jank sources — re-blurring/re-blending every scroll frame. Use plain layers instead.
+ */
+@media (pointer: coarse) {
+  header[data-header] {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .grain {
+    mix-blend-mode: normal;
+    opacity: 0.045;
+  }
+}

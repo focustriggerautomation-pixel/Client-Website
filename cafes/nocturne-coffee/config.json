@@ -3,6 +3,13 @@
   "name": "Nocturne",
   "tagline": "Specialty coffee, after dark",
   "mood": "dark-premium",
+  "timezone": "Asia/Kolkata",
+  "headings": {
+    "menu": {
+      "kicker": "Carta",
+      "title": "Tonight’s menu"
+    }
+  },
   "brand": {
     "primary": "#C9A46C",
     "accent": "#7A2E1F",

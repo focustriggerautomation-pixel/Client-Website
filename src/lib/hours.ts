@@ -10,9 +10,20 @@ export const DAY_NAMES: Record<Day, { short: string; long: string }> = {
   sun: { short: 'Sun', long: 'Sunday' },
 };
 
-/** JS getDay() is 0 = Sunday. */
-export const dayOf = (d: Date): Day => DAYS[(d.getDay() + 6) % 7];
 const dayOffset = (day: Day, n: number): Day => DAYS[(DAYS.indexOf(day) + n + 7 * 2) % 7];
+
+const formatters = new Map<string, Intl.DateTimeFormat>();
+/** Wall-clock day and minutes-since-midnight of `now` in the cafe's time zone (not the visitor's). */
+export function zonedNow(now: Date, timeZone: string): { day: Day; minutes: number } {
+  let f = formatters.get(timeZone);
+  if (!f) {
+    f = new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    formatters.set(timeZone, f);
+  }
+  const parts = f.formatToParts(now);
+  const get = (t: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === t)?.value ?? '0';
+  return { day: get('weekday').slice(0, 3).toLowerCase() as Day, minutes: (Number(get('hour')) % 24) * 60 + Number(get('minute')) };
+}
 
 const toMin = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
 /** "23:59" means "until midnight". */
@@ -28,8 +39,7 @@ export function formatTime(t: string): string {
   return `${h % 12 || 12}${m === '00' ? '' : `:${m}`} ${h < 12 ? 'am' : 'pm'}`;
 }
 
-export const formatIntervals = (ivs: Interval[]) =>
-  ivs.length ? ivs.map((iv) => `${formatTime(iv.open)} – ${formatTime(iv.close)}`).join(', ') : 'Closed';
+export const formatIntervals = (ivs: Interval[]) => (ivs.length ? ivs.map((iv) => `${formatTime(iv.open)} – ${formatTime(iv.close)}`).join(', ') : 'Closed');
 
 export interface WeekRow {
   day: Day;
@@ -39,8 +49,8 @@ export interface WeekRow {
   isToday: boolean;
 }
 
-export function weekRows(hours: CafeConfig['hours'], now: Date): WeekRow[] {
-  const today = dayOf(now);
+export function weekRows(hours: CafeConfig['hours'], now: Date, timeZone: string): WeekRow[] {
+  const { day: today } = zonedNow(now, timeZone);
   return DAYS.map((day) => {
     const intervals = dayIntervals(hours[day]);
     return { day, name: DAY_NAMES[day], intervals, text: formatIntervals(intervals), isToday: day === today };
@@ -50,16 +60,15 @@ export function weekRows(hours: CafeConfig['hours'], now: Date): WeekRow[] {
 export interface OpenStatus {
   open: boolean;
   today: Day;
-  /** "Open now", "Closed" */
+  /** "Open now", "Closed now" */
   headline: string;
-  /** "until 11 pm", "opens tomorrow at 8 am" */
+  /** "until 11 pm", "opens tomorrow at 8 am" (cafe-local times) */
   detail: string;
 }
 
-/** Open/closed right now, in the visitor's local time. Handles split days and past-midnight closing. */
-export function openStatus(hours: CafeConfig['hours'], now: Date): OpenStatus {
-  const today = dayOf(now);
-  const nowMin = now.getHours() * 60 + now.getMinutes();
+/** Open/closed right now in the cafe's time zone. Handles split days and past-midnight closing. */
+export function openStatus(hours: CafeConfig['hours'], now: Date, timeZone: string): OpenStatus {
+  const { day: today, minutes: nowMin } = zonedNow(now, timeZone);
   const todays = dayIntervals(hours[today]);
   const yesterdays = dayIntervals(hours[dayOffset(today, -1)]);
 

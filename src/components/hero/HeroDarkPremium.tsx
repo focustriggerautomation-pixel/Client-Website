@@ -9,7 +9,7 @@ export function HeroDarkPremium() {
   const { cafe } = useCafe();
   return (
     <section id={SECTION_IDS.top} aria-label={cafe.name} className="relative isolate flex min-h-svh flex-col overflow-hidden bg-bg text-ink">
-      <Img path={cafe.hero.heroImage} alt="" sizes="100vw" priority className="absolute inset-0 -z-30 h-full w-full object-cover object-center opacity-85" />
+      <Img path={cafe.hero.heroImage} alt="" sizes="100vw" priority data-hero="media" data-parallax="3" className="absolute inset-0 -z-30 h-full w-full object-cover object-center opacity-85" />
       {/* Phones: photo shows at the top, fades into ink under the text. */}
       <div
         aria-hidden
@@ -30,15 +30,15 @@ export function HeroDarkPremium() {
       />
       <div aria-hidden className="grain absolute inset-0 -z-10 opacity-[0.09]" />
 
-      <div className="container-x flex flex-1 flex-col justify-end pb-14 pt-32 sm:pb-20">
-        <p className="eyebrow flex items-center gap-4 text-primary">
+      <div data-parallax="-1.6" data-parallax-fade className="container-x flex flex-1 flex-col justify-end pb-14 pt-32 sm:pb-20">
+        <p data-hero="kicker" className="eyebrow flex items-center gap-4 text-primary">
           <span aria-hidden className="h-px w-10 shrink-0 bg-primary sm:w-16" />
           {cafe.tagline}
         </p>
-        <h1 className="display mt-6 max-w-[13ch] text-step-6 sm:mt-8">{cafe.hero.headline}</h1>
-        <p className="mt-6 max-w-[46ch] text-step-1 text-muted sm:mt-8">{cafe.hero.subheadline}</p>
+        <h1 data-hero="title" className="display mt-6 max-w-[13ch] text-step-6 sm:mt-8">{cafe.hero.headline}</h1>
+        <p data-hero="sub" className="mt-6 max-w-[46ch] text-step-1 text-muted sm:mt-8">{cafe.hero.subheadline}</p>
 
-        <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5 sm:mt-14">
+        <div data-hero="cta" className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5 sm:mt-14">
           <CtaButton className="eyebrow inline-flex rounded-button border border-primary bg-primary px-7 py-4 text-on-primary hover:bg-transparent hover:text-primary" />
           <a href={`#${SECTION_IDS.menu}`} className="eyebrow group inline-flex items-center gap-3 py-3 text-ink">
             View the menu <ArrowIcon className="transition-transform group-hover:translate-x-1" />

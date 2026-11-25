@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Mood } from '../../config/schema.ts';
 import { actionsInOrder, navItems, SECTION_IDS } from '../../lib/content.ts';
+import { useMotion } from '../../motion/MotionProvider.tsx';
 import { useCafe } from '../../theme/ThemeProvider.tsx';
 import { ActionLink } from '../ActionLink.tsx';
 import { CloseIcon, MenuIcon } from '../icons.tsx';
@@ -23,7 +24,7 @@ const STYLES: Record<Mood, HeaderStyle> = {
   'dark-premium': {
     shell: (s) => `transition-[background-color,border-color] duration-300 border-b ${s ? 'bg-bg/90 backdrop-blur-md border-line' : 'bg-transparent border-transparent'}`,
     bar: 'container-x flex h-16 items-center justify-between gap-6 md:h-20',
-    link: 'eyebrow text-muted hover:text-ink transition-colors',
+    link: 'link-line eyebrow text-muted hover:text-ink transition-colors',
     cta: 'eyebrow rounded-button border border-primary px-5 py-3 text-primary hover:bg-primary hover:text-on-primary',
     toggle: 'grid size-11 place-items-center text-2xl text-ink',
     panel: 'bg-bg',
@@ -43,7 +44,7 @@ const STYLES: Record<Mood, HeaderStyle> = {
   'warm-restaurant': {
     shell: (s) => `bg-bg/95 backdrop-blur border-b border-line transition-shadow ${s ? 'shadow-[0_8px_30px_-20px_rgb(var(--rgb-ink))]' : ''}`,
     bar: 'container-x flex h-[4.5rem] items-center justify-between gap-6 md:h-20',
-    link: 'font-semibold text-muted hover:text-primary transition-colors',
+    link: 'link-line font-semibold text-muted hover:text-primary transition-colors',
     cta: 'rounded-button bg-primary px-5 py-3 font-semibold text-on-primary hover:brightness-110',
     toggle: 'grid size-11 place-items-center rounded-button border border-line text-2xl text-ink',
     panel: 'paper bg-bg',
@@ -58,9 +59,15 @@ export function SiteHeader() {
   const nav = navItems(cafe);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { lenis } = useMotion();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    // Only touch React state when the value flips: setState on every scroll event can still re-render.
+    let last: boolean | null = null;
+    const onScroll = () => {
+      const v = window.scrollY > 24;
+      if (v !== last) setScrolled((last = v));
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -71,20 +78,22 @@ export function SiteHeader() {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
     const onResize = () => window.innerWidth >= 1024 && setOpen(false);
     document.body.style.overflow = 'hidden';
+    lenis?.stop();
     window.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);
     return () => {
       document.body.style.overflow = '';
+      lenis?.start();
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('resize', onResize);
     };
-  }, [open]);
+  }, [open, lenis]);
 
   const close = () => setOpen(false);
 
   return (
     <>
-    <header className={`fixed inset-x-0 top-0 z-40 ${s.shell(scrolled || open)}`}>
+    <header data-header data-menu-open={open || undefined} className={`fixed inset-x-0 top-0 z-40 ${s.shell(scrolled || open)}`}>
       <div className={s.bar}>
         <a href={`#${SECTION_IDS.top}`} onClick={close} aria-label={`${cafe.name}, back to top`} className="shrink-0">
           <Logo compact />
@@ -116,7 +125,7 @@ export function SiteHeader() {
 
     {/* Sibling of <header>: its backdrop-filter would otherwise trap this fixed panel inside the bar. */}
     {open && (
-        <div id="mobile-menu" className={`fixed inset-0 z-30 overflow-y-auto pt-20 lg:hidden ${s.panel}`}>
+        <div id="mobile-menu" data-lenis-prevent className={`fixed inset-0 z-30 overflow-y-auto pt-20 lg:hidden ${s.panel}`}>
           <nav aria-label="Mobile" className="container-x flex min-h-full flex-col pb-10 pt-6">
             <ul>
               {nav.map((n) => (

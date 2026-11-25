@@ -15,7 +15,11 @@ export function FloatingWhatsApp() {
   const { cafe, theme } = useCafe();
   const [show, setShow] = useState(false);
   useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.6);
+    let last: boolean | null = null;
+    const onScroll = () => {
+      const v = window.scrollY > window.innerHeight * 0.6;
+      if (v !== last) setShow((last = v)); // only when it flips
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
