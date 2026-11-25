@@ -172,13 +172,13 @@ function headFor(
 
 /**
  * Inline, before first paint. Decides how the prerendered first screen starts:
- *   - ?mood= / ?preview= → drop the prerender (it is built for the cafe's own mood); the app renders live
+ *   - ?mood= / ?preview=mobile (desktop) → drop the prerender (it is built for the cafe's own mood); the app renders live
  *   - intro won't play (seen this session, deep link, reduced motion, ?motion=off|reduced) → no splash, hero static
  *   - otherwise → html.shell-intro: the CSS intro runs now; the app hydrates when it has finished (__shellIntroUntil)
  */
 const shellScript = (slug: string, t: { mountAtMs: number; endsAtMs: number }) =>
   `<script>(function(){try{var r=document.getElementById('root'),o=document.getElementById('shell-intro'),u=new URLSearchParams(location.search);` +
-  `if(u.has('mood')||u.has('preview')){r.innerHTML='';r.removeAttribute('data-shell');o.remove();return}` +
+  `if(u.has('mood')||(u.get('preview')==='mobile'&&innerWidth>=760)){r.innerHTML='';r.removeAttribute('data-shell');o.remove();return}` +
   `var q=u.get('motion'),seen=false;try{seen=!!sessionStorage.getItem(${JSON.stringify(`intro-seen:${slug}`)})}catch(e){}` +
   `if(location.hash||seen||q==='off'||q==='reduced'||matchMedia('(prefers-reduced-motion: reduce)').matches){o.remove();return}` +
   `document.documentElement.classList.add('shell-intro');window.__shellIntroUntil=performance.now()+${t.mountAtMs};window.__shellIntroEnds=performance.now()+${t.endsAtMs}}catch(e){}})()</script>`;

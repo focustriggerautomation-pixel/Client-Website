@@ -13,6 +13,8 @@ type ShellWindow = Window & {
 };
 const w = window as ShellWindow;
 const root = document.getElementById('root')!;
+// Inside the ?preview=mobile phone frame: phone-style (hidden) scrollbars.
+if (window.top !== window.self) document.documentElement.classList.add('framed');
 // A prebuilt cafe page ships its first screen as HTML (src/prerender.tsx). Its intro + hero entrance play as
 // CSS from the first paint (scripts/lib/shellIntro.ts), or the hero is shown static; the app must not replay them.
 const shell = root.hasAttribute('data-shell');
