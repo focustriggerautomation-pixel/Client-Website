@@ -83,25 +83,30 @@ function MenuBright() {
               {cat.name}
             </h3>
             {cat.description && <p className="mt-2 text-muted">{cat.description}</p>}
-            <ul data-anim="stagger" className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
-              {cat.items.map((item, i) => (
-                <li key={item.name} data-tilt className="relative flex rounded-lg border-2 border-ink bg-bg shadow-[4px_4px_0_var(--c-ink)] sm:flex-col">
-                  <div className="w-28 shrink-0 overflow-hidden rounded-l-[calc(var(--r-lg)-2px)] border-r-2 border-ink sm:w-auto sm:rounded-none sm:rounded-t-[calc(var(--r-lg)-2px)] sm:border-b-2 sm:border-r-0">
-                    {item.image ? (
+            <ul data-anim="stagger" className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+              {cat.items.map((item) => (
+                <li
+                  key={item.name}
+                  data-tilt={item.image ? '' : undefined}
+                  className={`relative flex rounded-lg border-2 border-ink bg-bg ${
+                    item.image
+                      ? 'shadow-[4px_4px_0_var(--c-ink)] sm:flex-col'
+                      : 'transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-[4px_4px_0_var(--c-ink)]'
+                  }`}
+                >
+                  {/* Dishes without a photo are clean text cards: no placeholder block. */}
+                  {item.image && (
+                    <div className="w-28 shrink-0 overflow-hidden rounded-l-[calc(var(--r-lg)-2px)] border-r-2 border-ink sm:w-auto sm:rounded-none sm:rounded-t-[calc(var(--r-lg)-2px)] sm:border-b-2 sm:border-r-0">
                       <Img path={item.image} alt={item.name} sizes="(min-width: 1024px) 24rem, (min-width: 640px) 45vw, 7rem" className="h-full w-full object-cover sm:aspect-[4/3] sm:h-auto" />
-                    ) : (
-                      <div aria-hidden className={`grid h-full min-h-28 place-items-center sm:aspect-[4/3] sm:h-auto ${(ci + i) % 2 ? 'bg-primary/20' : 'bg-accent/40'}`}>
-                        <span className="display text-step-5 opacity-80">{item.name.charAt(0)}</span>
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   {item.tag && (
                     <span className="absolute -top-3 right-3 inline-flex rotate-3 items-center gap-1.5 rounded-button border-2 border-ink bg-accent px-2.5 py-0.5 text-xs font-bold text-on-accent shadow-[2px_2px_0_var(--c-ink)]">
                       <DietMark tag={item.tag} />
                       {item.tag}
                     </span>
                   )}
-                  <div className="flex min-w-0 flex-1 flex-col p-4 sm:p-5">
+                  <div className={`flex min-w-0 flex-1 flex-col p-4 sm:p-5 ${item.image ? '' : 'pt-5 sm:pt-6'}`}>
                     <div className="flex items-start justify-between gap-3">
                       <h4 className="font-display text-step-1 font-bold leading-tight">{item.name}</h4>
                       <span className="shrink-0 rounded-button bg-ink px-2.5 py-0.5 text-step-n1 font-bold text-bg">{price(item)}</span>

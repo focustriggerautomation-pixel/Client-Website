@@ -75,13 +75,13 @@ function SignatureBright() {
               {item.image ? (
                 <Img path={item.image} alt={item.name} sizes="(min-width: 1024px) 26rem, (min-width: 640px) 45vw, 80vw" className="aspect-square w-full rounded-md border-2 border-ink object-cover" />
               ) : (
-                <div aria-hidden className="grid aspect-square place-items-center rounded-md border-2 border-ink bg-bg/15">
-                  <span className="display text-step-7">{item.name.charAt(0)}</span>
-                </div>
+                <p aria-hidden className="px-2 pt-3 font-display text-step-5 font-extrabold leading-none opacity-30 tabular-nums">
+                  {String(i + 1).padStart(2, '0')}
+                </p>
               )}
-              <div className="px-2 pb-3 pt-5">
+              <div className={`px-2 pb-3 ${item.image ? 'pt-5' : 'pt-10 sm:pt-16'}`}>
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="display text-step-2">{item.name}</h3>
+                  <h3 className={`display ${item.image ? 'text-step-2' : 'text-step-3'}`}>{item.name}</h3>
                   <span data-count className="shrink-0 rotate-3 rounded-button border-2 border-ink bg-bg px-3 py-1 font-bold tabular-nums text-ink">{price}</span>
                 </div>
                 {item.description && <p className="mt-3">{item.description}</p>}

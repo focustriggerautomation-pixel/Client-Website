@@ -120,6 +120,9 @@ function Rig({ mood, children }: { mood: Palette3D['mood']; children: ReactNode 
   const pointer = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const scroll = useRef(0);
   const spin = useRef(0);
+  // Touch screens: no finger or tilt steering and no scroll-linked spin. A finger dragging to scroll reads as
+  // "pointer" input and swung the object around, which looked like violent shaking on phones.
+  const touch = useMemo(() => window.matchMedia('(pointer: coarse)').matches, []);
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
@@ -137,8 +140,8 @@ function Rig({ mood, children }: { mood: Palette3D['mood']; children: ReactNode 
       pointer.current.tx = soft(e.gamma, 45);
       pointer.current.ty = soft(e.beta - 60, 45);
     };
-    window.addEventListener('pointermove', onMove, { passive: true });
-    window.addEventListener('deviceorientation', onTilt, { passive: true });
+    if (!touch) window.addEventListener('pointermove', onMove, { passive: true });
+    void onTilt; // device tilt is off: phones report constant hand tremor
     // Scroll-linked: progress of the hero scrolling out of view, from the shared ScrollTrigger/Lenis setup.
     const st = ScrollTrigger.create({ trigger: '#top', start: 'top top', end: 'bottom top', onUpdate: (self) => (scroll.current = self.progress) });
     return () => {
@@ -146,7 +149,7 @@ function Rig({ mood, children }: { mood: Palette3D['mood']; children: ReactNode 
       window.removeEventListener('deviceorientation', onTilt);
       st.kill();
     };
-  }, []);
+  }, [touch]);
 
   useFrame((s, dt) => {
     const g = group.current;
@@ -168,18 +171,19 @@ function Rig({ mood, children }: { mood: Palette3D['mood']; children: ReactNode 
       spin.current = 0.35 + Math.sin(t * 0.22) * 0.3;
     } else if (mood === 'bright-cafe') {
       // playful but calm: a soft float with a slight sway (a hard hop read as shaking on phones)
-      y = Math.sin(t * 1.5) * 0.07;
+      y = Math.sin(t * 1.2) * 0.05;
       sy = 1 + Math.sin(t * 1.5 + Math.PI / 2) * 0.012;
       sx = 1 / sy;
       rz = Math.sin(t * 0.8) * 0.035;
-      spin.current += dt * 0.3;
+      spin.current += dt * 0.25;
     } else {
       // calm, slow turntable
       spin.current += dt * 0.14;
     }
-    const zoom = 1 + sp * 0.28;
-    g.position.y = y + sp * 0.35;
-    g.rotation.set(pt.y * 0.12, spin.current + pt.x * 0.4 + sp * Math.PI * 0.9, rz);
+    const scrollFx = touch ? 0 : sp;
+    const zoom = 1 + scrollFx * 0.28;
+    g.position.y = y + scrollFx * 0.35;
+    g.rotation.set(pt.y * 0.12, spin.current + pt.x * 0.4 + scrollFx * Math.PI * 0.9, rz);
     g.scale.set(sx * zoom, sy * zoom, sx * zoom);
   });
 

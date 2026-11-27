@@ -399,47 +399,8 @@ export function MotionLayer({ children }: { children: ReactNode }) {
           });
         });
       }
-    } else if (tilts.length) {
-      // Touch: cards lean with scroll velocity, only while on screen.
-      const visible = new Set<Element>();
-      const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? visible.add(e.target) : visible.delete(e.target))));
-      tilts.forEach((el) => io.observe(el));
-      cleanups.push(() => io.disconnect());
-      const setters = new Map<Element, (v: number) => void>();
-      const setter = (el: Element) => {
-        let s = setters.get(el);
-        if (!s) {
-          gsap.set(el, { transformPerspective: 900 });
-          s = gsap.quickTo(el, 'rotationX', {
-            duration: 0.6,
-            ease: 'power3.out',
-          });
-          setters.set(el, s);
-        }
-        return s;
-      };
-      let last = 0;
-      // One reusable timer (creating a delayedCall per scroll frame was per-frame garbage).
-      const settle = gsap
-        .delayedCall(0.14, () => {
-          last = 0;
-          visible.forEach((el) => setters.get(el)?.(0));
-        })
-        .pause();
-      ScrollTrigger.create({
-        start: 0,
-        end: 'max',
-        onUpdate: cs((self: ScrollTrigger) => {
-          const a = Math.round(gsap.utils.clamp(-P.touchTilt, P.touchTilt, -self.getVelocity() / 260) * 4) / 4;
-          if (a !== last) {
-            // only when the angle actually changes (¼° steps): no per-frame style writes at steady speed
-            last = a;
-            visible.forEach((el) => setter(el)(a));
-          }
-          settle.restart(true);
-        }),
-      });
     }
+    // Touch screens: no tilt. Leaning every card with scroll velocity read as shaking on long menus.
 
     // ── 7. Magnetic CTAs (desktop).
     if (finePointer) {
