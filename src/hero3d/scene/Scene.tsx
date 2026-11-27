@@ -56,7 +56,10 @@ function Driver({ active, gate, onReady, onFail }: { active: RefObject<boolean>;
         return;
       }
       const now = performance.now();
-      advance(now);
+      // advance() takes SECONDS: in frameloop="never" R3F sets clock.elapsedTime to this value and derives
+      // useFrame's delta from it. Passing milliseconds made every animation run ~1000× too fast (the object
+      // jumped to a new pose every frame — the "violent shaking").
+      advance(now / 1000);
       if (decided) return;
       frames++;
       if (frames === WARMUP) start = now;

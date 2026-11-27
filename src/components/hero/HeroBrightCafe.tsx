@@ -55,7 +55,7 @@ export function HeroBrightCafe() {
             data-hero="media"
             className="relative aspect-[4/5] w-full rotate-2 rounded-image border-[3px] border-ink object-cover shadow-[10px_10px_0_var(--c-ink)] lg:aspect-[5/6]"
           />
-          <Hero3D allow3d={desktop} className="absolute -bottom-24 -left-36 hidden aspect-square w-[82%] lg:block" />
+          <Hero3D allow3d={desktop} className="absolute -bottom-20 -left-14 hidden aspect-square w-[72%] lg:block" />
         </div>
       </div>
     </section>
