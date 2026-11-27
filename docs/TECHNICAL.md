@@ -46,7 +46,9 @@ vercel.json                ← build settings, rewrites, X-Robots-Tag + cache he
   text logo is used. A square-ish logo (aspect ≤ 1.3) also becomes the favicon; otherwise the favicon is a monogram of
   the cafe's initials in the brand colours.
 - **fonts** (optional): `{ "display": { "family": "Playfair Display", "weights": [400, 700], "italic": true } }`.
-  Any Google Font; the weights must exist for that family.
+  Any Google Font; the weights must exist for that family. The display font also takes optional headline styling:
+  `"fallback": "sans-serif"`, `"uppercase": true`, `"weight": 800`, `"tracking": 0.005` (em), `"leading": 0.88`
+  (see `cafes/crosta` for a condensed, all-caps setup matching an all-caps logo).
 - **menu prices**: a number gets `menu.currency` (default `₹`) prepended; a string is shown as-is.
 - **menu tags**: items tagged `Bestseller` or `Signature` also appear in the Signature section (hidden if none).
   `Veg` / `Non-veg` / `Vegan` show the Indian veg/non-veg mark.

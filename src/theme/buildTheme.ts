@@ -52,7 +52,8 @@ export function buildTheme(cafe: CafeConfig, moodOverride?: Mood): Theme {
   // ---- fonts
   const display = withFontDefaults(cafe.fonts?.display ?? t.fonts.display);
   const body = withFontDefaults(cafe.fonts?.body ?? t.fonts.body);
-  const displayFallback = cafe.fonts?.display ? 'serif' : t.fonts.display.fallback;
+  const custom = cafe.fonts?.display;
+  const displayFallback = custom ? (custom.fallback ?? 'serif') : t.fonts.display.fallback;
   const bodyFallback = cafe.fonts?.body ? 'sans-serif' : t.fonts.body.fallback;
 
   // ---- type scale: step-(-1) … step-7
@@ -80,10 +81,10 @@ export function buildTheme(cafe: CafeConfig, moodOverride?: Mood): Theme {
 
     '--ff-display': fontStack(display.family, displayFallback),
     '--ff-body': fontStack(body.family, bodyFallback),
-    '--display-weight': String(t.type.displayWeight),
-    '--display-tracking': t.type.displayTracking,
-    '--display-leading': String(t.type.displayLeading),
-    '--display-transform': t.type.displayTransform,
+    '--display-weight': String(custom?.weight ?? t.type.displayWeight),
+    '--display-tracking': custom?.tracking !== undefined ? `${custom.tracking}em` : t.type.displayTracking,
+    '--display-leading': String(custom?.leading ?? t.type.displayLeading),
+    '--display-transform': custom?.uppercase ? 'uppercase' : custom?.uppercase === false ? 'none' : t.type.displayTransform,
     '--display-style': t.type.displayItalic && display.italic ? 'italic' : 'normal',
     '--eyebrow-tracking': t.type.eyebrowTracking,
     '--body-leading': String(t.type.bodyLeading),

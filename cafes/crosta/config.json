@@ -8,10 +8,24 @@
     "description": "Pizza, pasta, burgers, coffee and fresh bakes on Circular Road, Nabha. Open every day, 10 am – 10 pm."
   },
   "brand": {
-    "primary": "#9E1B1B",
-    "accent": "#D9A441",
-    "background": "#F6EEDF",
+    "primary": "#9B1B1B",
+    "accent": "#4F6B34",
+    "background": "#F3EBDD",
     "logo": "images/logo.png"
+  },
+  "fonts": {
+    "display": {
+      "family": "Big Shoulders Display",
+      "weights": [
+        700,
+        800
+      ],
+      "fallback": "sans-serif",
+      "uppercase": true,
+      "weight": 800,
+      "tracking": 0.005,
+      "leading": 0.88
+    }
   },
   "hero": {
     "headline": "Italian flavours, freshly served.",

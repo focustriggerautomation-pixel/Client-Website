@@ -77,6 +77,20 @@ const googleFont = z.strictObject({
 });
 export type GoogleFont = z.infer<typeof googleFont>;
 
+/** The headline font, plus optional styling that overrides the mood's headline defaults. */
+const displayFont = googleFont.extend({
+  /** "sans-serif" for sans display faces (default "serif"); only affects the fallback while the font loads. */
+  fallback: z.enum(['serif', 'sans-serif']).optional(),
+  /** Set headlines in capitals (e.g. to match an all-caps logo). */
+  uppercase: z.boolean().optional(),
+  /** Headline weight; must be one of `weights`. */
+  weight: z.number().int().min(100).max(900).optional(),
+  /** Letter spacing in em, e.g. 0.01 (condensed faces) or -0.03 (wide faces). */
+  tracking: z.number().min(-0.1).max(0.2).optional(),
+  /** Line height of headlines, e.g. 0.9. */
+  leading: z.number().min(0.7).max(1.6).optional(),
+});
+
 const menuItem = z.strictObject({
   name: nonEmpty('menu item name'),
   description: z.string().trim().default(''),
@@ -141,7 +155,7 @@ export const cafeConfigSchema = z.strictObject({
   /** Override the mood's default font pair. Either or both. */
   fonts: z
     .strictObject({
-      display: googleFont.optional(),
+      display: displayFont.optional(),
       body: googleFont.optional(),
     })
     .optional(),
