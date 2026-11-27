@@ -1,0 +1,588 @@
+{
+  "slug": "crosta",
+  "name": "Crosta",
+  "tagline": "Italian cafe & bakery · Nabha",
+  "mood": "bright-cafe",
+  "seo": {
+    "title": "Crosta — Italian cafe & bakery in Nabha",
+    "description": "Pizza, pasta, burgers, coffee and fresh bakes on Circular Road, Nabha. Open every day, 10 am – 10 pm."
+  },
+  "brand": {
+    "primary": "#9E1B1B",
+    "accent": "#D9A441",
+    "background": "#F6EEDF"
+  },
+  "hero": {
+    "headline": "Italian flavours, freshly served.",
+    "subheadline": "Handcrafted pizza, rich pasta, juicy burgers and sweet bakes, all under one roof on Circular Road, Nabha.",
+    "heroImage": "images/hero.jpg"
+  },
+  "about": {
+    "title": "Good food, good mood",
+    "story": [
+      "Crosta opened on Circular Road in October, turning a bare construction site into Nabha’s all-day Italian cafe and bakehouse: blistered pizzas, handcrafted pasta bowls, fresh bakes and savoury veg & non-veg snacks, all under one roof.",
+      "Come for the food, stay for the room: hand-woven carpets across the ceiling and walls, marble, cane chairs and warm lighting make it the spot for a casual hangout, a date night or a late craving run."
+    ],
+    "images": [
+      "images/about-1.jpg",
+      "images/about-2.jpg"
+    ]
+  },
+  "menu": {
+    "currency": "₹",
+    "categories": [
+      {
+        "name": "Pizza",
+        "items": [
+          {
+            "name": "Margherita Pizza",
+            "description": "Classic Italian tomato sauce baked with mozzarella cheese. Regular ₹109 · Medium ₹199 · Large ₹299",
+            "price": "from ₹109",
+            "tag": "Veg"
+          },
+          {
+            "name": "Garden Fresh Pizza",
+            "description": "Broccoli, jalapeño, mushroom, onion. Regular ₹159 · Medium ₹269 · Large ₹399",
+            "price": "from ₹159",
+            "tag": "Veg"
+          },
+          {
+            "name": "Red Paprika Pizza",
+            "description": "Tandoori paneer, capsicum, red paprika. Regular ₹169 · Medium ₹299 · Large ₹389",
+            "price": "from ₹169",
+            "tag": "Veg"
+          },
+          {
+            "name": "Farm Fresh Pizza",
+            "description": "Tomato, onion, capsicum, black olive. Regular ₹179 · Medium ₹309 · Large ₹449",
+            "price": "from ₹179",
+            "tag": "Veg"
+          },
+          {
+            "name": "Happy Delight Pizza",
+            "description": "Onion, capsicum, black olive, jalapeño, mushroom, baby corn. Regular ₹199 · Medium ₹329 · Large ₹499",
+            "price": "from ₹199",
+            "tag": "Veg"
+          },
+          {
+            "name": "Paradise Pizza",
+            "description": "Capsicum, red paprika, black olive, paneer. Regular ₹209 · Medium ₹319 · Large ₹479",
+            "price": "from ₹209",
+            "tag": "Veg"
+          },
+          {
+            "name": "Chicken Sausages Pizza",
+            "description": "Chicken sausages, onion, mozzarella cheese. Regular ₹159 · Medium ₹299 · Large ₹459",
+            "price": "from ₹159",
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Chicken N Spicy",
+            "description": "Chicken, red paprika, onion, mozzarella cheese. Regular ₹169 · Medium ₹309 · Large ₹469",
+            "price": "from ₹169",
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Chicken Zest",
+            "description": "Chicken tikka, jalapeño, red paprika, capsicum, onion, mozzarella. Regular ₹179 · Medium ₹349 · Large ₹499",
+            "price": "from ₹179",
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Chicken Corn Delight",
+            "description": "Chicken tikka, corn, red paprika, onion, black olive, mozzarella. Regular ₹189 · Medium ₹359 · Large ₹499",
+            "price": "from ₹189",
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Chicken Supreme",
+            "description": "Chicken tikka, meatball, sausages, pineapple, black olives, capsicum, mozzarella. Regular ₹199 · Medium ₹369 · Large ₹549",
+            "price": "from ₹199",
+            "tag": "Non-veg"
+          }
+        ]
+      },
+      {
+        "name": "Pasta",
+        "items": [
+          {
+            "name": "Arrabbiata Pasta",
+            "description": "Spicy tomato sauce.",
+            "price": 149,
+            "tag": "Veg"
+          },
+          {
+            "name": "Aurora Pasta",
+            "description": "Pink sauce.",
+            "price": 149,
+            "tag": "Veg"
+          },
+          {
+            "name": "Alfredo Pasta",
+            "description": "Creamy white sauce.",
+            "price": 159,
+            "tag": "Veg"
+          },
+          {
+            "name": "Makhani Pasta",
+            "description": "Rich makhani gravy, Italian style.",
+            "price": 159,
+            "tag": "Veg"
+          },
+          {
+            "name": "Arrabbiata Chicken Pasta",
+            "description": "",
+            "price": 179,
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Alfredo Chicken Pasta",
+            "description": "",
+            "price": 189,
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Aurora Chicken Pasta",
+            "description": "",
+            "price": 199,
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Makhani Chicken Pasta",
+            "description": "",
+            "price": 209,
+            "tag": "Non-veg"
+          }
+        ]
+      },
+      {
+        "name": "Burgers",
+        "items": [
+          {
+            "name": "Crosta Special Burger",
+            "description": "The house burger.",
+            "price": 119,
+            "tag": "Signature"
+          },
+          {
+            "name": "Classic Burger",
+            "description": "",
+            "price": 39,
+            "tag": "Veg"
+          },
+          {
+            "name": "Paneer Burger",
+            "description": "",
+            "price": 89,
+            "tag": "Veg"
+          },
+          {
+            "name": "Cheese Burger",
+            "description": "",
+            "price": 99,
+            "tag": "Veg"
+          },
+          {
+            "name": "Crispy Chicken Burger",
+            "description": "",
+            "price": 119,
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Tandoori Chicken Burger",
+            "description": "",
+            "price": 129,
+            "tag": "Non-veg"
+          },
+          {
+            "name": "BBQ Chicken Burger",
+            "description": "",
+            "price": 139,
+            "tag": "Non-veg"
+          }
+        ]
+      },
+      {
+        "name": "Sandwiches & wraps",
+        "items": [
+          {
+            "name": "Grilled Sandwich",
+            "description": "",
+            "price": 99,
+            "tag": "Veg"
+          },
+          {
+            "name": "Paneer Sandwich",
+            "description": "",
+            "price": 129,
+            "tag": "Veg"
+          },
+          {
+            "name": "Afghani Sandwich",
+            "description": "",
+            "price": 145,
+            "tag": "Veg"
+          },
+          {
+            "name": "Crosta Special Chicken Sandwich",
+            "description": "The house chicken sandwich.",
+            "price": 149,
+            "tag": "Signature"
+          },
+          {
+            "name": "Tandoori Paneer Wrap",
+            "description": "",
+            "price": 139,
+            "tag": "Veg"
+          },
+          {
+            "name": "Falafel Wrap",
+            "description": "",
+            "price": 119,
+            "tag": "Veg"
+          },
+          {
+            "name": "Grilled Chicken Wrap",
+            "description": "",
+            "price": 149,
+            "tag": "Non-veg"
+          }
+        ]
+      },
+      {
+        "name": "Garlic bread & fries",
+        "items": [
+          {
+            "name": "Plain Garlic Bread",
+            "description": "",
+            "price": 89,
+            "tag": "Veg"
+          },
+          {
+            "name": "Chilli Garlic Bread",
+            "description": "",
+            "price": 119,
+            "tag": "Veg"
+          },
+          {
+            "name": "Mushroom Garlic Bread",
+            "description": "",
+            "price": 139,
+            "tag": "Veg"
+          },
+          {
+            "name": "Stuffed Garlic Bread",
+            "description": "",
+            "price": 149,
+            "tag": "Veg"
+          },
+          {
+            "name": "Chicken Garlic Bread",
+            "description": "",
+            "price": 199,
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Peri-Peri Fries",
+            "description": "",
+            "price": 99,
+            "tag": "Veg"
+          },
+          {
+            "name": "Cheese Loaded Fries",
+            "description": "",
+            "price": 139,
+            "tag": "Veg"
+          }
+        ]
+      },
+      {
+        "name": "Snacks",
+        "items": [
+          {
+            "name": "Mozzarella Sticks (8 pc)",
+            "description": "",
+            "price": 179,
+            "tag": "Veg"
+          },
+          {
+            "name": "Golden Onion Rings (8 pc)",
+            "description": "",
+            "price": 159,
+            "tag": "Veg"
+          },
+          {
+            "name": "Cheese Corn Nuggets (10 pc)",
+            "description": "",
+            "price": 139,
+            "tag": "Veg"
+          },
+          {
+            "name": "Kurkure Momos (8 pc)",
+            "description": "",
+            "price": 129,
+            "tag": "Veg"
+          },
+          {
+            "name": "Paneer Momos (8 pc)",
+            "description": "",
+            "price": 129,
+            "tag": "Veg"
+          },
+          {
+            "name": "Chicken Lollipop (6 pc)",
+            "description": "",
+            "price": 149,
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Chicken Seekh Kabab (2 pc)",
+            "description": "",
+            "price": 149,
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Chicken Loaded Fries",
+            "description": "",
+            "price": 189,
+            "tag": "Non-veg"
+          }
+        ]
+      },
+      {
+        "name": "Fried chicken",
+        "items": [
+          {
+            "name": "All Taste Bucket",
+            "description": "10 popcorn, 6 wings, 2 legs.",
+            "price": 469,
+            "tag": "Signature"
+          },
+          {
+            "name": "Chicken Wings",
+            "description": "6 pc ₹159 · 12 pc ₹359 · 20 pc ₹509",
+            "price": "from ₹159",
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Chicken Strips",
+            "description": "6 pc ₹279 · 12 pc ₹509 · 15 pc ₹599",
+            "price": "from ₹279",
+            "tag": "Non-veg"
+          },
+          {
+            "name": "Chicken Legs",
+            "description": "2 pc ₹149 · 4 pc ₹279 · 6 pc ₹409",
+            "price": "from ₹149",
+            "tag": "Non-veg"
+          }
+        ]
+      },
+      {
+        "name": "Coffee & shakes",
+        "items": [
+          {
+            "name": "Hot Coffee",
+            "description": "",
+            "price": 49
+          },
+          {
+            "name": "Cold Coffee",
+            "description": "",
+            "price": 99
+          },
+          {
+            "name": "Hazelnut Coffee",
+            "description": "",
+            "price": 119
+          },
+          {
+            "name": "Caramel Coffee",
+            "description": "",
+            "price": 119
+          },
+          {
+            "name": "Cold Coffee with Ice Cream",
+            "description": "",
+            "price": 129
+          },
+          {
+            "name": "Oreo Shake",
+            "description": "",
+            "price": 99
+          },
+          {
+            "name": "Kit Kat Shake",
+            "description": "",
+            "price": 109
+          },
+          {
+            "name": "Biscoff Shake",
+            "description": "",
+            "price": 129
+          },
+          {
+            "name": "Mint Mojito",
+            "description": "Mocktail.",
+            "price": 99
+          },
+          {
+            "name": "Fire and Ice",
+            "description": "Mocktail.",
+            "price": 129
+          }
+        ]
+      },
+      {
+        "name": "Desserts",
+        "items": [
+          {
+            "name": "Brownie with Ice Cream Sizzler",
+            "description": "",
+            "price": 159
+          },
+          {
+            "name": "Brownie with Chocolate Sizzler",
+            "description": "",
+            "price": 129
+          },
+          {
+            "name": "Dark Chocolate Bowl",
+            "description": "",
+            "price": 149
+          },
+          {
+            "name": "Dairy Milk Bowl",
+            "description": "",
+            "price": 129
+          },
+          {
+            "name": "Kit Kat Bowl",
+            "description": "",
+            "price": 119
+          }
+        ]
+      },
+      {
+        "name": "Daily combos",
+        "description": "One deal for every day of the week.",
+        "items": [
+          {
+            "name": "Monday",
+            "description": "Any regular pizza + 1 Coke.",
+            "price": 149
+          },
+          {
+            "name": "Tuesday",
+            "description": "Aloo tikki burger + fries + Coke.",
+            "price": 129
+          },
+          {
+            "name": "Wednesday",
+            "description": "Any two large pizzas.",
+            "price": 649
+          },
+          {
+            "name": "Thursday",
+            "description": "Grilled sandwich + cold coffee.",
+            "price": 209
+          },
+          {
+            "name": "Friday",
+            "description": "Chicken sandwich + Coke.",
+            "price": 189
+          },
+          {
+            "name": "Saturday",
+            "description": "Any two veg regular pizzas.",
+            "price": 329
+          },
+          {
+            "name": "Sunday",
+            "description": "Any medium pizza + 2 Coke.",
+            "price": 409
+          }
+        ]
+      }
+    ]
+  },
+  "gallery": [
+    "images/gallery-1.jpg",
+    "images/gallery-2.jpg",
+    "images/gallery-3.jpg",
+    "images/gallery-4.jpg"
+  ],
+  "reviews": [
+    {
+      "text": "Had a really nice experience at this café! The ambience was beautiful, the food was delicious, and the staff was polite and welcoming. Loved the overall vibe of the place. Definitely worth visiting if you're in Nabha! ❤️",
+      "author": "Jasmeen Kaur",
+      "source": "Google"
+    },
+    {
+      "text": "Really loved the food and the ambience and service was amazing must try",
+      "author": "Harshali Bhatt",
+      "source": "Google"
+    },
+    {
+      "text": "food and taste is to good and the ambiance is to elegant",
+      "author": "Harpreet Khangura",
+      "source": "Google"
+    }
+  ],
+  "headings": {
+    "menu": {
+      "kicker": "Menu",
+      "title": "Eat, drink, be happy"
+    },
+    "reviews": {
+      "kicker": "5.0 on Google"
+    },
+    "signatures": {
+      "kicker": "House specials",
+      "title": "Only at Crosta"
+    }
+  },
+  "hours": {
+    "mon": {
+      "open": "10:00",
+      "close": "22:00"
+    },
+    "tue": {
+      "open": "10:00",
+      "close": "22:00"
+    },
+    "wed": {
+      "open": "10:00",
+      "close": "22:00"
+    },
+    "thu": {
+      "open": "10:00",
+      "close": "22:00"
+    },
+    "fri": {
+      "open": "10:00",
+      "close": "22:00"
+    },
+    "sat": {
+      "open": "10:00",
+      "close": "22:00"
+    },
+    "sun": {
+      "open": "10:00",
+      "close": "22:00"
+    }
+  },
+  "contact": {
+    "address": "Circular Road, beside Nav Bharat Furnitures, Nabha, Punjab 147201",
+    "mapsEmbedUrl": "https://www.google.com/maps?q=30.3664308,76.1512798&z=17&output=embed",
+    "phone": "+91 79739 08848",
+    "whatsapp": "+91 79739 08848",
+    "instagram": "__crosta__"
+  },
+  "cta": {
+    "text": "Order on WhatsApp",
+    "action": "whatsapp",
+    "message": "Hi Crosta! I’d like to place an order.",
+    "headline": "Free home delivery on orders above ₹399"
+  }
+}
