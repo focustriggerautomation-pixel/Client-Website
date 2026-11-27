@@ -10,7 +10,8 @@
   "brand": {
     "primary": "#9E1B1B",
     "accent": "#D9A441",
-    "background": "#F6EEDF"
+    "background": "#F6EEDF",
+    "logo": "images/logo.png"
   },
   "hero": {
     "headline": "Italian flavours, freshly served.",
@@ -507,10 +508,11 @@
     ]
   },
   "gallery": [
-    "images/gallery-1.jpg",
-    "images/gallery-2.jpg",
-    "images/gallery-3.jpg",
-    "images/gallery-4.jpg"
+    "images/interior.jpg",
+    "images/menu-board-1.jpg",
+    "images/about-1.jpg",
+    "images/menu-board-2.jpg",
+    "images/about-2.jpg"
   ],
   "reviews": [
     {
@@ -540,6 +542,10 @@
     "signatures": {
       "kicker": "House specials",
       "title": "Only at Crosta"
+    },
+    "gallery": {
+      "kicker": "Inside Crosta",
+      "title": "Tap the menu boards to read them in full"
     }
   },
   "hours": {

@@ -128,8 +128,14 @@ function Rig({ mood, children }: { mood: Palette3D['mood']; children: ReactNode 
     };
     const onTilt = (e: DeviceOrientationEvent) => {
       if (e.gamma == null || e.beta == null) return;
-      pointer.current.tx = THREE.MathUtils.clamp(e.gamma / 30, -1, 1);
-      pointer.current.ty = THREE.MathUtils.clamp((e.beta - 45) / 30, -1, 1);
+      // Phones report hand tremor as constant small tilts: ignore the first few degrees and react gently,
+      // so the object only follows a deliberate tilt.
+      const soft = (deg: number, range: number) => {
+        const d = Math.abs(deg) < 4 ? 0 : deg - Math.sign(deg) * 4;
+        return THREE.MathUtils.clamp(d / range, -1, 1);
+      };
+      pointer.current.tx = soft(e.gamma, 45);
+      pointer.current.ty = soft(e.beta - 60, 45);
     };
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('deviceorientation', onTilt, { passive: true });
@@ -147,7 +153,7 @@ function Rig({ mood, children }: { mood: Palette3D['mood']; children: ReactNode 
     if (!g) return;
     const t = s.clock.elapsedTime;
     const pt = pointer.current;
-    const k = 1 - Math.exp(-dt * 4);
+    const k = 1 - Math.exp(-dt * 2.5);
     pt.x += (pt.tx - pt.x) * k;
     pt.y += (pt.ty - pt.y) * k;
     const sp = scroll.current;
@@ -161,14 +167,12 @@ function Rig({ mood, children }: { mood: Palette3D['mood']; children: ReactNode 
       y = Math.sin(t * 0.9) * 0.05;
       spin.current = 0.35 + Math.sin(t * 0.22) * 0.3;
     } else if (mood === 'bright-cafe') {
-      // bouncy: hop, squash on landing, a little wobble
-      const b = Math.abs(Math.sin(t * 2.6));
-      y = b * 0.24;
-      const land = Math.pow(1 - b, 8);
-      sy = 1 - land * 0.08;
-      sx = 1 + land * 0.05;
-      rz = Math.sin(t * 1.3) * 0.06;
-      spin.current += dt * 0.45;
+      // playful but calm: a soft float with a slight sway (a hard hop read as shaking on phones)
+      y = Math.sin(t * 1.5) * 0.07;
+      sy = 1 + Math.sin(t * 1.5 + Math.PI / 2) * 0.012;
+      sx = 1 / sy;
+      rz = Math.sin(t * 0.8) * 0.035;
+      spin.current += dt * 0.3;
     } else {
       // calm, slow turntable
       spin.current += dt * 0.14;

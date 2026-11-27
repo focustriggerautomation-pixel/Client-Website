@@ -310,17 +310,16 @@
 }
 @keyframes h3d-float {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(10deg); }
+  50% { transform: translateY(-8px) rotate(6deg); }
 }
 .h3d-bounce {
   transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: h3d-bounce 1.8s cubic-bezier(0.33, 0, 0.3, 1) infinite;
+  animation: h3d-bounce 4.2s ease-in-out infinite;
 }
 @keyframes h3d-bounce {
-  0%, 100% { transform: translateY(0) scale(1.04, 0.96); }
-  14% { transform: translateY(0) scale(1, 1); }
-  50% { transform: translateY(-18px) scale(0.98, 1.02); }
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(-9px) rotate(1.5deg); }
 }
 .h3d-sway {
   transform-box: fill-box;
